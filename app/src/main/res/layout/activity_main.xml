@@ -15,6 +15,11 @@
       android:layout_alignParentTop="true"
       android:id="@+id/textView" />
 
+  <TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="testing"/>
+
     <com.alamkanak.weekview.WeekView
         android:id="@+id/weekView"
         android:layout_width="match_parent"
