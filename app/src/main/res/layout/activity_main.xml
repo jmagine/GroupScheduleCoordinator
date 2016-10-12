@@ -33,5 +33,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        app:rippleColor="@color/colorPrimaryDark"/>
+        app:rippleColor="@color/colorPrimary"/>
 </RelativeLayout>
