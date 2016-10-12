@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/activity_main"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context="com.example.android.groupschedulecoordinator.MainActivity">
 
-  <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Hello World!"
-      android:layout_alignParentTop="true"
-      android:id="@+id/textView" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.android.groupschedulecoordinator.MainActivity">
 
   <TextView
     android:layout_width="wrap_content"
@@ -21,23 +18,23 @@
     android:text="testing"/>
 
     <com.alamkanak.weekview.WeekView
-        android:id="@+id/weekView"
+      android:id="@+id/weekView"
+      android:layout_height="wrap_content"
+      android:layout_width="wrap_content"/>
+
+    <ListView
+        android:id="@+id/groupList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:eventTextColor="@android:color/white"
-        app:textSize="12sp"
-        app:hourHeight="60dp"
-        app:headerColumnPadding="8dp"
-        app:headerColumnTextColor="#8f000000"
-        app:headerRowPadding="12dp"
-        app:columnGap="8dp"
-        app:noOfVisibleDays="3"
-        app:headerRowBackgroundColor="#ffefefef"
-        app:dayBackgroundColor="#05000000"
-        app:todayBackgroundColor="#1848adff"
-        app:headerColumnBackground="#ffffffff"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/myFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        app:rippleColor="@color/colorPrimary"/>
 </RelativeLayout>

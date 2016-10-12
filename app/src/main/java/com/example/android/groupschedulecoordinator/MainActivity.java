@@ -1,60 +1,75 @@
 package com.example.android.groupschedulecoordinator;
 
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import com.alamkanak.weekview.WeekView;
-import com.alamkanak.weekview.WeekViewEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-  WeekView mWeekView;
-  WeekView.EventClickListener mEventClickListener;
-  WeekView.EventLongPressListener mEventLongPressListener;
+    Button btn;
+    ListView lv;
 
-    WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
-        @Override
-        public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
-            // Populate the week view with some events.
-          List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-          Calendar startTime = Calendar.getInstance();
-          startTime.set(Calendar.HOUR_OF_DAY, 3);
-          startTime.set(Calendar.MINUTE, 0);
-          startTime.set(Calendar.MONTH, newMonth-1);
-          startTime.set(Calendar.YEAR, newYear);
-          Calendar endTime = (Calendar) startTime.clone();
-          endTime.add(Calendar.HOUR, 1);
-          endTime.set(Calendar.MONTH, newMonth-1);
-          WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
-          //event.setColor(getResources().getColor(R.color.event_color_01));
-          events.add(event);
+        lv = (ListView) findViewById(R.id.groupList);
 
-          return events;
-        }
-    };
+        List<String> group_list = new ArrayList<String>();
+        group_list.add("foo");
+        group_list.add("bar");
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_main);
-    // Get a reference for the week view in the layout.
-    mWeekView = (WeekView) findViewById(R.id.weekView);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                group_list);
 
-    // Set an action when any event is clicked.
-    mWeekView.setOnEventClickListener(mEventClickListener);
+        lv.setAdapter(arrayAdapter);
 
-    // The week view has infinite scrolling horizontally. We have to provide the events of a
-    // month every time the month changes on the week view.
-    mWeekView.setMonthChangeListener(mMonthChangeListener);
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
 
-    // Set long press listener for events.
-    mWeekView.setEventLongPressListener(mEventLongPressListener);
-  }
+                String item = ((TextView) view).getText().toString();
 
-  protected String getEventTitle(Calendar time) {
-    return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
-  }
+                Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+                startActivity(new Intent(MainActivity.this, Main0Activity.class));
+            }
+        });
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                android.content.Context context = getApplicationContext();
+                CharSequence text = "Text!";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+
+        });
+
+
+//    btn = (Button)findViewById(R.id.button);
+//
+//    btn.setOnClickListener(new View.OnClickListener() {
+//      @Override
+//      public void onClick(View v) {
+//        startActivity(new Intent(MainActivity.this, Main0Activity.class));
+//      }
+//    });
+    }
 }
