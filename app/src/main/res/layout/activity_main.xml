@@ -12,15 +12,13 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.android.groupschedulecoordinator.MainActivity">
 
-  <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="testing"/>
+
 
     <com.alamkanak.weekview.WeekView
-      android:id="@+id/weekView"
-      android:layout_height="wrap_content"
-      android:layout_width="wrap_content"/>
+        android:id="@+id/weekView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" />
 
     <ListView
         android:id="@+id/groupList"
@@ -33,10 +31,10 @@
         android:id="@+id/myFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:rippleColor="@color/colorPrimary"
-        app:srcCompat="@android:drawable/ic_input_add"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        app:rippleColor="@color/colorPrimary"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </RelativeLayout>

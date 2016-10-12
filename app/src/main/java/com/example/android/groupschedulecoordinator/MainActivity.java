@@ -30,6 +30,13 @@ public class MainActivity extends AppCompatActivity {
         group_list.add("foo");
         group_list.add("bar");
 
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
+            String groupName = extras.getString("groupName");
+            group_list.add(groupName);
+        }
+
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_list_item_1,
@@ -65,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+
 //    btn = (Button)findViewById(R.id.button);
 //
 //    btn.setOnClickListener(new View.OnClickListener() {
@@ -74,4 +82,5 @@ public class MainActivity extends AppCompatActivity {
 //      }
 //    });
     }
+
 }
