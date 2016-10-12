@@ -26,21 +26,20 @@
         android:inputType="textPersonName"
         android:ems="10"
         android:layout_marginTop="24dp"
-        android:id="@+id/editText"
+        android:id="@+id/tbGroupName"
         android:layout_below="@+id/textView2"
         android:layout_toRightOf="@+id/textView3"
         android:layout_toEndOf="@+id/textView3"
         android:layout_marginLeft="19dp"
-        android:layout_marginStart="19dp"
-        android:hint="Name" />
+        android:layout_marginStart="19dp" />
 
     <TextView
         android:text="Group Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView3"
-        android:layout_alignBaseline="@+id/editText"
-        android:layout_alignBottom="@+id/editText"
+        android:layout_alignBaseline="@+id/tbGroupName"
+        android:layout_alignBottom="@+id/tbGroupName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -51,13 +50,14 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="13dp"
-        android:id="@+id/button" />
+        android:id="@+id/button"
+        android:onClick="createGroup" />
 
     <TextView
         android:text="Add Members"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText"
+        android:layout_below="@+id/tbGroupName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="28dp"
@@ -71,7 +71,7 @@
         android:id="@+id/editText2"
         android:layout_alignBaseline="@+id/textView4"
         android:layout_alignBottom="@+id/textView4"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText"
+        android:layout_alignLeft="@+id/tbGroupName"
+        android:layout_alignStart="@+id/tbGroupName"
         android:hint="example@gmail.com" />
 </RelativeLayout>
