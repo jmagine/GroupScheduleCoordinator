@@ -52,12 +52,14 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                android.content.Context context = getApplicationContext();
-                CharSequence text = "Text!";
-                int duration = Toast.LENGTH_SHORT;
+//                android.content.Context context = getApplicationContext();
+//                CharSequence text = "Text!";
+//                int duration = Toast.LENGTH_SHORT;
+//
+//                Toast toast = Toast.makeText(context, text, duration);
+//                toast.show();
 
-                Toast toast = Toast.makeText(context, text, duration);
-                toast.show();
+                startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
             }
 
         });
