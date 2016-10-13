@@ -36,17 +36,17 @@ public class MainActivity extends AppCompatActivity {
 
     lv.setAdapter(arrayAdapter);
 
-      lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-          @Override
-          public void onItemClick(AdapterView<?> parent, View view, int position,
-                                  long id) {
+    lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position,
+                              long id) {
 
-              String item = ((TextView)view).getText().toString();
+          String item = ((TextView)view).getText().toString();
 
-              Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-              startActivity(new Intent(MainActivity.this, Main0Activity.class));
-          }
-      });
+          Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
+          startActivity(new Intent(MainActivity.this, Main0Activity.class));
+      }
+    });
 
 //    btn = (Button)findViewById(R.id.button);
 //
