@@ -36,6 +36,11 @@ public class ActivityCreateGroup extends AppCompatActivity {
 
             Bundle extras = getIntent().getExtras();
             ArrayList<String> group_list = extras.getStringArrayList("groupList");
+
+            if(group_list == null)
+            {
+                group_list = new ArrayList<>();
+            }
             group_list.add(groupName);
 
             //intent.putExtra("groupName", groupName);
