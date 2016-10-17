@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class ActivityCreateGroup extends AppCompatActivity {
 
     @Override
@@ -32,7 +34,12 @@ public class ActivityCreateGroup extends AppCompatActivity {
         {
             Intent intent = new Intent(ActivityCreateGroup.this, MainActivity.class);
 
-            intent.putExtra("groupName", groupName);
+            Bundle extras = getIntent().getExtras();
+            ArrayList<String> group_list = extras.getStringArrayList("groupList");
+            group_list.add(groupName);
+
+            //intent.putExtra("groupName", groupName);
+            intent.putStringArrayListExtra("groupList", group_list);
 
             startActivity(intent);
         }
