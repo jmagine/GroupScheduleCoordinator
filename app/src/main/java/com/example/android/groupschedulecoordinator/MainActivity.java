@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,12 +31,14 @@ public class MainActivity extends AppCompatActivity {
         group_list.add("foo");
         group_list.add("bar");
 
-//        Bundle extras = getIntent().getExtras();
-//        if(extras != null)
-//        {
-//            String groupName = extras.getString("groupName");
-//            group_list.add(groupName);
-//        }
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
+            String groupName = extras.getString("groupName");
+            if(groupName != null) {
+                group_list.add(groupName);
+            }
+        }
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                 this,
