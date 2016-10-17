@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,12 +13,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button btn;
     ListView lv;
+    ArrayList<String> group_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,23 +29,31 @@ public class MainActivity extends AppCompatActivity {
 
         lv = (ListView) findViewById(R.id.groupList);
 
-        List<String> group_list = new ArrayList<String>();
-        group_list.add("foo");
-        group_list.add("bar");
+          group_list = new ArrayList<String>();
+//        group_list.add("foo");
+//        group_list.add("bar");
 
-//        Bundle extras = getIntent().getExtras();
-//        if(extras != null)
-//        {
+        Bundle extras = getIntent().getExtras();
+        if(extras != null)
+        {
 //            String groupName = extras.getString("groupName");
-//            group_list.add(groupName);
-//        }
+//            if(groupName != null) {
+//                group_list.add(groupName);
+//            }
+            group_list = extras.getStringArrayList("groupList");
+        }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                this,
-                android.R.layout.simple_list_item_1,
-                group_list);
+        if(group_list != null) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    group_list);
 
-        lv.setAdapter(arrayAdapter);
+            lv.setAdapter(arrayAdapter);
+        }
+
+
+
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -59,14 +70,12 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                android.content.Context context = getApplicationContext();
-//                CharSequence text = "Text!";
-//                int duration = Toast.LENGTH_SHORT;
 //
-//                Toast toast = Toast.makeText(context, text, duration);
-//                toast.show();
+                Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
+                intent.putStringArrayListExtra("groupList", group_list);
 
-                startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
+                startActivity(intent);
+                //startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
             }
 
         });
