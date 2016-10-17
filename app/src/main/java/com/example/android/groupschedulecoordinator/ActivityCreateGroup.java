@@ -30,10 +30,16 @@ public class ActivityCreateGroup extends AppCompatActivity {
         }
         else
         {
+//            Intent intent = new Intent(ActivityCreateGroup.this, MainActivity.class);
+
+//            intent.putExtra("groupName", groupName);
+
+//            startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putString("groupName", groupName);
             Intent intent = new Intent(ActivityCreateGroup.this, MainActivity.class);
-
-            intent.putExtra("groupName", groupName);
-
+            intent.putExtras(bundle);
+//            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
         }
 

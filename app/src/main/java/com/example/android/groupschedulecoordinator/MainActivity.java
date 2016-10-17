@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     ListView lv;
 
+    List<String> group_list = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
 
         lv = (ListView) findViewById(R.id.groupList);
 
-        List<String> group_list = new ArrayList<String>();
         group_list.add("foo");
         group_list.add("bar");
 
@@ -72,8 +73,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
             }
 
-        });
 
+        });
 
 
 //    btn = (Button)findViewById(R.id.button);
@@ -85,5 +86,16 @@ public class MainActivity extends AppCompatActivity {
 //      }
 //    });
     }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+        if (requestCode == 1) {
+
+            if(resultCode == RESULT_OK){
+                //Update List
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //Do nothing?
+            }
+        }
+    }//onActivityResult
 }
