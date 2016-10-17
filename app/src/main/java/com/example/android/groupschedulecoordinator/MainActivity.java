@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//
+
                 Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
                 intent.putStringArrayListExtra("groupList", group_list);
 
@@ -80,16 +80,10 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-
-
-//    btn = (Button)findViewById(R.id.button);
-//
-//    btn.setOnClickListener(new View.OnClickListener() {
-//      @Override
-//      public void onClick(View v) {
-//        startActivity(new Intent(MainActivity.this, Main0Activity.class));
-//      }
-//    });
     }
 
+
+    @Override
+    public void onBackPressed() {
+    }
 }
