@@ -1,14 +1,19 @@
 package com.example.android.groupschedulecoordinator;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button btn;
     ListView lv;
     ArrayList<String> group_list;
+    final Context c = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,21 +66,51 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
 
-                String item = ((TextView) view).getText().toString();
-
-                Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
                 startActivity(new Intent(MainActivity.this, Main0Activity.class));
             }
         });
+
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
-                intent.putStringArrayListExtra("groupList", group_list);
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
+                View mView = layoutInflaterAndroid.inflate(R.layout.dialog_popup, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
+                alertDialogBuilderUserInput.setView(mView);
 
-                startActivity(intent);
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
+
+                alertDialogBuilderUserInput
+                        .setCancelable(false)
+                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogBox, int id) {
+                                group_list.add(userInputDialogEditText.getText().toString());
+                                ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                        c,
+                                        android.R.layout.simple_list_item_1,
+                                        group_list);
+
+                                lv.setAdapter(arrayAdapter);
+                            }
+                        })
+
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialogBox, int id) {
+                                        //dialogBox.cancel();
+                                    }
+                                });
+
+                AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.show();
+
+//                Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
+//                intent.putStringArrayListExtra("groupList", group_list);
+//
+//                startActivity(intent);
                 //startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
             }
 
@@ -83,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onBackPressed() {
-    }
+//    @Override
+//    public void onBackPressed() {
+//    }
 }
