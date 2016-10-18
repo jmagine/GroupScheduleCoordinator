@@ -63,7 +63,9 @@ public class MainActivity extends AppCompatActivity {
                 String item = ((TextView) view).getText().toString();
 
                 Toast.makeText(getBaseContext(), item, Toast.LENGTH_LONG).show();
-                startActivity(new Intent(MainActivity.this, Main0Activity.class));
+                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
+                intent.putExtra("groupName", item);
+                startActivity(intent);
             }
         });
 
