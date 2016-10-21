@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 //        group_list.add("foo");
 //        group_list.add("bar");
 
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
         if(extras != null)
         {
 //            String groupName = extras.getString("groupName");
@@ -65,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-
-                startActivity(new Intent(MainActivity.this, Main0Activity.class));
+                String groupName = (String) lv.getItemAtPosition(position);
+                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
+                intent.putExtra("groupName", groupName);
+                startActivity(intent);
             }
         });
 

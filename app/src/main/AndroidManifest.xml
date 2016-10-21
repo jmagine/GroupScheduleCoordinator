@@ -29,8 +29,6 @@
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".GroupDescriptionActivity" />
-        <activity android:name=".GroupMembersActivity"></activity>
     </application>
 
 </manifest>
