@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.android.groupschedulecoordinator.GroupActivity"
-    tools:showIn="@layout/activity_group">
+    tools:showIn="@layout/activity_group"
+    android:fillViewport="true">
 
     <TabHost
         android:id="@+id/tabHost"
@@ -29,6 +30,23 @@
                 android:layout_height="match_parent">
 
                 <LinearLayout
+                    android:id="@+id/members"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id = "@+id/addmembers"
+                    android:layout_gravity="center"
+                    android:text = "Add Member"/>
+
+
+
+
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/info"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -36,13 +54,7 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/members"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
 
-                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/calendar"
