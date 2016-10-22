@@ -38,7 +38,9 @@ public class GroupActivity extends AppCompatActivity {
                     android.R.layout.simple_list_item_1,
                     group_list);
 
-            lv.setAdapter(arrayAdapter);
+            if( lv != null ) {
+                lv.setAdapter(arrayAdapter);
+            }
         }
 
 
@@ -109,11 +111,11 @@ public class GroupActivity extends AppCompatActivity {
 
 
 
-//                Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
-//                intent.putStringArrayListExtra("groupList", group_list);
-//
-//                startActivity(intent);
-                //startActivity(new Intent(MainActivity.this, ActivityCreateGroup.class));
+                Intent intent = new Intent(GroupActivity.this, ActivityCreateGroup.class);
+                intent.putStringArrayListExtra("groupList", group_list);
+
+                startActivity(intent);
+                startActivity(new Intent(GroupActivity.this, ActivityCreateGroup.class));
             }
 
         });
