@@ -26,22 +26,23 @@ public class GroupActivity extends AppCompatActivity {
         host.setup();
 
         //Tab 1
-        TabHost.TabSpec spec = host.newTabSpec("Tab One");
-        spec.setContent(R.id.info);
-        spec.setIndicator("Info");
-        host.addTab(spec);
+        TabHost.TabSpec spec1 = host.newTabSpec("Tab One");
+        spec1.setContent(R.id.info);
+        spec1.setIndicator("Info");
+        host.addTab(spec1);
+
 
         //Tab 2
-        spec = host.newTabSpec("Tab Two");
-        spec.setContent(R.id.members);
-        spec.setIndicator("Members");
-        host.addTab(spec);
+        TabHost.TabSpec spec2 = host.newTabSpec("Tab Two");
+        spec2.setContent(R.id.members);
+        spec2.setIndicator("Members");
+        host.addTab(spec2);
 
         //Tab 3
-        spec = host.newTabSpec("Tab Three");
-        spec.setContent(R.id.calendar);
-        spec.setIndicator("Calendar");
-        host.addTab(spec);
-        
+        TabHost.TabSpec spec3 = host.newTabSpec("Tab Three");
+        spec3.setContent(R.id.calendar);
+        spec3.setIndicator("Calendar");
+        host.addTab(spec3);
+
     }
 }
