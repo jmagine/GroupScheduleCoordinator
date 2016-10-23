@@ -196,6 +196,16 @@ public class GroupActivity extends AppCompatActivity {
             }
 
         });
+
+        Button fab1 = (Button) findViewById(R.id.btnNewMeeting);
+        fab1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
+
+                startActivity(intent);
+            }
+
+        });
         
     }
     protected String getEventTitle(Calendar time) {
