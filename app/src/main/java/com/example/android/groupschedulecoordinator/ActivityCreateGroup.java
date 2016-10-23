@@ -19,12 +19,26 @@ public class ActivityCreateGroup extends AppCompatActivity {
     }
 
     public void createGroup(View v) {
-        EditText text =  (EditText) findViewById(R.id.tbGroupName);
-        String groupName = text.getText().toString();
-        if(groupName.isEmpty())
+        EditText text =  (EditText) findViewById(R.id.tbMemberName);
+        String memberName = text.getText().toString();
+        EditText text2 = (EditText) findViewById(R.id.tbMemberEmail);
+        String memberEmail = text2.getText().toString();
+
+
+
+        if(memberName.isEmpty())
         {
             android.content.Context context = getApplicationContext();
-            CharSequence warning = "Please enter a valid group name.";
+            CharSequence warning = "Please enter a valid name.";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, warning, duration);
+            toast.show();
+        }
+        if(memberEmail.isEmpty())
+        {
+            android.content.Context context = getApplicationContext();
+            CharSequence warning = "Please enter a valid email.";
             int duration = Toast.LENGTH_SHORT;
 
             Toast toast = Toast.makeText(context, warning, duration);
@@ -44,9 +58,9 @@ public class ActivityCreateGroup extends AppCompatActivity {
             {
                 group_list = new ArrayList<>();
             }
-            group_list.add(groupName);
+            group_list.add(memberEmail);
 
-            //intent.putExtra("groupName", groupName);
+            //intent.putExtra("memberName", memberName);
             intent.putStringArrayListExtra("groupList", group_list);
 
             startActivity(intent);

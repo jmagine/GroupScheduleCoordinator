@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.groupList);
 
           group_list = new ArrayList<String>();
-//        group_list.add("foo");
-//        group_list.add("bar");
+          group_list.add("Test Group");
+  //        group_list.add("bar");
 
         final Bundle extras = getIntent().getExtras();
         if(extras != null)
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onBackPressed() {
-//    }
+    @Override
+    public void onBackPressed() {
+    }
 }

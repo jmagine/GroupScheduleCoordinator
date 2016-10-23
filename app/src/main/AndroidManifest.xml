@@ -28,7 +28,11 @@
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:parentActivityName="com.example.android.groupschedulecoordinator.MainActivity"/>
+            <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.example.android.groupschedulecoordinator.MainActivity" />
     </application>
 
 </manifest>
