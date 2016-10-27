@@ -61,14 +61,10 @@
 
         <!--</android.support.design.widget.TextInputLayout>-->
 
-        <Button
+        <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
-            style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Sign in with Google"
-            android:textStyle="bold" />
+            android:layout_height="wrap_content" />
 
         <!--<Button-->
             <!--android:id="@+id/sign_up_button"-->
