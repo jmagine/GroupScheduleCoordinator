@@ -53,7 +53,7 @@ public class LoginScreen extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mFirebaseUser;
     private GoogleApiClient mGoogleApiClient;
-
+    //check
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
