@@ -32,7 +32,7 @@ dependencies {
   compile 'com.android.support:design:24.2.1'
   testCompile 'junit:junit:4.12'
 
-  compile 'com.google.android.gms:play-services-auth:9.0.2'
+  compile 'com.google.android.gms:play-services-auth:9.2.1'
   compile 'pub.devrel:easypermissions:0.1.5'
   compile('com.google.api-client:google-api-client-android:1.22.0') {
     exclude group: 'org.apache.httpcomponents'
@@ -41,9 +41,8 @@ dependencies {
     exclude group: 'org.apache.httpcomponents'
   }
 
-    //firebase relaated services
+    //firebase related services
     compile 'com.google.firebase:firebase-auth:9.2.1'
 
 }
-
 apply plugin: 'com.google.gms.google-services'

@@ -428,7 +428,7 @@ public class TestActivity extends Activity
 
         @Override
         protected void onPostExecute(List<String> output) {
-            mProgress.hide();
+            mProgress.dismiss();
             if (output == null || output.size() == 0) {
                 mOutputText.setText("No results returned.");
             } else {
@@ -439,7 +439,7 @@ public class TestActivity extends Activity
 
         @Override
         protected void onCancelled() {
-            mProgress.hide();
+            mProgress.dismiss();
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(
