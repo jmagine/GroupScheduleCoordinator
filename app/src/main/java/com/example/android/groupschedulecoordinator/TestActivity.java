@@ -12,9 +12,10 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.ExponentialBackOff;
 
-import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.*;
 import com.google.api.client.util.DateTime;
 
+import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.*;
 
 import android.Manifest;
@@ -41,7 +42,10 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -353,8 +357,32 @@ public class TestActivity extends Activity
          */
         private List<String> getDataFromApi() throws IOException {
             // List the next 10 events from the primary calendar.
-            DateTime now = new DateTime(System.currentTimeMillis());
+            java.util.GregorianCalendar dayStart = new GregorianCalendar();
+            java.util.GregorianCalendar dayEnd = new GregorianCalendar();
+            Date date = new Date();
+            dayStart.setTime(date);
+            System.out.println(dayStart.get(java.util.Calendar.DAY_OF_MONTH));
+            dayEnd.add(dayStart.DAY_OF_MONTH,1);
+            System.out.println(dayEnd.get(java.util.Calendar.DAY_OF_MONTH));
+
+            DateTime timeMin = new DateTime(dayStart.getTime());
+            DateTime timeMax = new DateTime(dayEnd.getTime());
+
+            System.out.println(dayStart.getTime().toString());
+            System.out.println(dayEnd.getTime().toString());
+
             List<String> eventStrings = new ArrayList<String>();
+            FreeBusyRequestItem requestItem = new FreeBusyRequestItem().setId("primary");
+            List<FreeBusyRequestItem> listOfRequest = new ArrayList<FreeBusyRequestItem>();
+            listOfRequest.add(requestItem);
+            FreeBusyRequest freeBusyRequest = new FreeBusyRequest().setTimeMax(timeMax).setTimeMin(timeMin).setTimeZone("America/Los_Angeles").setItems(listOfRequest);
+
+            Calendar.Freebusy.Query freebusy = mService.freebusy().query(freeBusyRequest);
+
+            FreeBusyResponse busyTimes = freebusy.execute();
+            Map<String,FreeBusyCalendar> calendarMap = busyTimes.getCalendars();
+
+            /*
             Events events = mService.events().list("primary")
                     .setMaxResults(10)
                     .setTimeMin(now)
@@ -373,6 +401,21 @@ public class TestActivity extends Activity
                 eventStrings.add(
                         String.format("%s (%s)", event.getSummary(), start));
             }
+            */
+            List<TimePeriod> timeRanges = calendarMap.get("primary").getBusy();
+            for (TimePeriod time:timeRanges){
+                eventStrings.add(time.getStart().toString());
+                eventStrings.add(time.getEnd().toString());
+            }
+
+            /*
+            for (Map.Entry<String,FreeBusyCalendar> key: calendarMap.entrySet()){
+                System.out.println(key.getKey());
+                eventStrings.add(
+                        String.format("%s", calendarMap.get(key.getKey()).toPrettyString() ));
+
+            }*/
+
             return eventStrings;
         }
 
