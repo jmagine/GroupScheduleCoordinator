@@ -40,4 +40,10 @@ dependencies {
   compile('com.google.apis:google-api-services-calendar:v3-rev218-1.22.0') {
     exclude group: 'org.apache.httpcomponents'
   }
+
+    //firebase relaated services
+    compile 'com.google.firebase:firebase-auth:9.2.1'
+
 }
+
+apply plugin: 'com.google.gms.google-services'
