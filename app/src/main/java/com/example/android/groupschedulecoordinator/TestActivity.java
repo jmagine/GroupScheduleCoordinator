@@ -108,7 +108,7 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
-
+        String apiKey = "AIzaSyB_J3Otk4GDjNu22ZCuJp9hxZyXvhiMqzw";
         setContentView(activityLayout);
 
         // Initialize credentials and service object.
@@ -330,7 +330,7 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Google Calendar API Android Quickstart")
+                    .setApplicationName("Coordinatr")
                     .build();
         }
 
@@ -361,7 +361,7 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
             Date date = new Date();
             dayStart.setTime(date);
             System.out.println(dayStart.get(java.util.Calendar.DAY_OF_MONTH));
-            dayEnd.add(dayStart.DAY_OF_MONTH,1);
+            dayEnd.add(dayStart.DAY_OF_MONTH,14);
             System.out.println(dayEnd.get(java.util.Calendar.DAY_OF_MONTH));
 
             DateTime timeMin = new DateTime(dayStart.getTime());
@@ -403,8 +403,10 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
             */
             List<TimePeriod> timeRanges = calendarMap.get("primary").getBusy();
             for (TimePeriod time:timeRanges){
-                eventStrings.add(time.getStart().toString());
-                eventStrings.add(time.getEnd().toString());
+                Date startDate = new Date(time.getStart().getValue());
+                Date endDate = new Date(time.getEnd().getValue());
+                eventStrings.add(startDate.toString());
+                eventStrings.add(endDate.toString());
             }
 
             /*
