@@ -10,24 +10,24 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class ActivityCreateGroup extends AppCompatActivity {
+
+public class AddMemberToGroup extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
+        setContentView(R.layout.add_member_to_group);
     }
 
-    public void createGroup(View v) {
+    public void addMember(View v) {
         EditText text =  (EditText) findViewById(R.id.tbMemberName);
         String memberName = text.getText().toString();
         EditText text2 = (EditText) findViewById(R.id.tbMemberEmail);
         String memberEmail = text2.getText().toString();
 
-
-
         if(memberName.isEmpty())
         {
+
             android.content.Context context = getApplicationContext();
             CharSequence warning = "Please enter a valid name.";
             int duration = Toast.LENGTH_SHORT;
@@ -35,7 +35,7 @@ public class ActivityCreateGroup extends AppCompatActivity {
             Toast toast = Toast.makeText(context, warning, duration);
             toast.show();
         }
-        if(memberEmail.isEmpty())
+        else if(memberEmail.isEmpty())
         {
             android.content.Context context = getApplicationContext();
             CharSequence warning = "Please enter a valid email.";
@@ -46,7 +46,7 @@ public class ActivityCreateGroup extends AppCompatActivity {
         }
         else
         {
-            Intent intent = new Intent(ActivityCreateGroup.this, GroupActivity.class);
+            Intent intent = new Intent(AddMemberToGroup.this, GroupActivity.class);
 
             Bundle extras = getIntent().getExtras();
             ArrayList<String> group_list = new ArrayList<>();

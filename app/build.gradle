@@ -23,26 +23,26 @@ android {
 }
 
 dependencies {
-  compile 'com.github.alamkanak:android-week-view:1.1.7'
-  compile fileTree(dir: 'libs', include: ['*.jar'])
-  androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-    exclude group: 'com.android.support', module: 'support-annotations'
-  })
-  compile 'com.android.support:appcompat-v7:24.2.1'
-  compile 'com.android.support:design:24.2.1'
-  testCompile 'junit:junit:4.12'
+    compile 'com.github.alamkanak:android-week-view:1.1.7'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+      })
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:design:24.2.1'
+    testCompile 'junit:junit:4.12'
 
-  compile 'com.google.android.gms:play-services-auth:9.2.1'
-  compile 'pub.devrel:easypermissions:0.1.5'
-  compile('com.google.api-client:google-api-client-android:1.22.0') {
-    exclude group: 'org.apache.httpcomponents'
-  }
-  compile('com.google.apis:google-api-services-calendar:v3-rev218-1.22.0') {
-    exclude group: 'org.apache.httpcomponents'
-  }
-
-    //firebase related services
+    compile 'com.google.android.gms:play-services-auth:9.2.1'
     compile 'com.google.firebase:firebase-auth:9.2.1'
+
+    compile 'pub.devrel:easypermissions:0.1.5'
+    compile('com.google.api-client:google-api-client-android:1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+      }
+    compile('com.google.apis:google-api-services-calendar:v3-rev218-1.22.0') {
+        exclude group: 'org.apache.httpcomponents'
+      }
+
 
 }
 apply plugin: 'com.google.gms.google-services'
