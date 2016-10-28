@@ -35,7 +35,7 @@ public class AddMemberToGroup extends AppCompatActivity {
             Toast toast = Toast.makeText(context, warning, duration);
             toast.show();
         }
-        if(memberEmail.isEmpty())
+        else if(memberEmail.isEmpty())
         {
             android.content.Context context = getApplicationContext();
             CharSequence warning = "Please enter a valid email.";

@@ -1,77 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/add_member_to_group"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/add_member_to_group"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingBottom="@dimen/activity_vertical_margin"
+  android:paddingLeft="@dimen/activity_horizontal_margin"
+  android:paddingRight="@dimen/activity_horizontal_margin"
+  android:paddingTop="16dp"
+  android:orientation="vertical"
+  tools:context="com.example.android.groupschedulecoordinator.AddMemberToGroup">
+
+  <TextView
+    android:text="Add New Member"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:id="@+id/textView2"
+    android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+  <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.groupschedulecoordinator.AddMemberToGroup">
-
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
     <TextView
-        android:text="Add New Member"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+      android:text="Member Name"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="16dp"
+      android:id="@+id/tvMemberName" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_marginTop="24dp"
-        android:id="@+id/tbMemberName"
-        android:layout_below="@+id/textView2"
-        android:layout_toRightOf="@+id/tvMemberName"
-        android:layout_toEndOf="@+id/tvMemberName"
-        android:layout_marginLeft="19dp"
-        android:layout_marginStart="19dp" />
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:inputType="textPersonName"
+      android:ems="10"
+      android:layout_marginTop="0dp"
+      android:id="@+id/tbMemberName" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:orientation="horizontal">
 
     <TextView
-        android:text="Member Name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tvMemberName"
-        android:layout_alignBaseline="@+id/tbMemberName"
-        android:layout_alignBottom="@+id/tbMemberName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:text="Add Member"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="13dp"
-        android:id="@+id/btnCreateGroup"
-        android:onClick="addMember" />
-
-    <TextView
-        android:text="Member Email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tbMemberName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp"
-        android:id="@+id/tvMemberEmail" />
+      android:text="Member Email"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginRight="16dp"
+      android:id="@+id/tvMemberEmail" />
 
     <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/tbMemberEmail"
-        android:layout_alignBaseline="@+id/tvMemberEmail"
-        android:layout_alignBottom="@+id/tvMemberEmail"
-        android:layout_alignLeft="@+id/tbMemberName"
-        android:layout_alignStart="@+id/tbMemberName"
-        android:hint="example@gmail.com" />
-</RelativeLayout>
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:inputType="textEmailAddress"
+      android:ems="10"
+      android:id="@+id/tbMemberEmail"
+      android:hint="example@gmail.com" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:orientation="horizontal">
+  </LinearLayout>
+
+  <Button
+    android:text="Add Member"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_marginBottom="13dp"
+    android:id="@+id/btnCreateGroup"
+    android:onClick="addMember" />
+
+</LinearLayout>
