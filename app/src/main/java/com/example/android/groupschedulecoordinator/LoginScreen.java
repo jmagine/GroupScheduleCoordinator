@@ -6,7 +6,6 @@ package com.example.android.groupschedulecoordinator;
  */
 
 
-
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -56,14 +55,18 @@ public class LoginScreen extends AppCompatActivity{
 
     private GoogleApiClient mGoogleApiClient;
     private SignInButton mGoogleButton;
+    private String mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         mGoogleButton = (SignInButton) findViewById(R.id.sign_in_button);
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -137,8 +140,10 @@ public class LoginScreen extends AppCompatActivity{
                             Log.w(TAG, "signInWithCredential", task.getException());
                             Toast.makeText(LoginScreen.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
+                        } else{
+                            startActivity(new Intent(LoginScreen.this, MainActivity.class));
+                            finish();
                         }
-                        // ...
                     }
                 });
     }

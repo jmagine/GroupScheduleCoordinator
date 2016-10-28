@@ -21,10 +21,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
     Button btn;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> group_list;
     final Context c = this;
     private static final String TAG = "MainActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
