@@ -188,7 +188,7 @@ public class GroupActivity extends AppCompatActivity {
 
 
 
-                Intent intent = new Intent(GroupActivity.this, ActivityCreateGroup.class);
+                Intent intent = new Intent(GroupActivity.this, AddMemberToGroup.class);
                 intent.putStringArrayListExtra("groupList", group_list);
 
                 startActivity(intent);
