@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     final Context c = this;
     private static final String TAG = "MainActivity";
 
+    private Button logout;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +68,15 @@ public class MainActivity extends AppCompatActivity {
             lv.setAdapter(arrayAdapter);
         }
 
+        mAuth = FirebaseAuth.getInstance();
+        logout = (Button) findViewById(R.id.button2);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAuth.signOut();
+                startActivity(new Intent(MainActivity.this, LoginScreen.class));
+            }
+        });
 
 
 

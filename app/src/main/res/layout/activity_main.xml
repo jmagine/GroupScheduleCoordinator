@@ -13,19 +13,11 @@
     tools:context="com.example.android.groupschedulecoordinator.MainActivity">
 
 
-
     <com.alamkanak.weekview.WeekView
         android:id="@+id/weekView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="invisible" />
-
-    <ListView
-        android:id="@+id/groupList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView6" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/myFab"
@@ -40,13 +32,31 @@
 
     <TextView
         android:text="Groups"
-        android:textSize="25sp"
+        android:textSize="30dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView6"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/groupList" />
 
+    <Button
+        android:text="Logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/button2" />
+
+    <ListView
+        android:id="@+id/groupList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/button2" />
 
 </RelativeLayout>
