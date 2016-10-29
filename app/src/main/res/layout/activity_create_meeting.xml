@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_create_group"
+    android:id="@+id/activity_create_meeting"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.android.groupschedulecoordinator.ActivityCreateGroup">
+    tools:context="com.example.android.groupschedulecoordinator.ActivityCreateMeeting">
 
     <TextView
-        android:text="Create New Group"
+        android:text="Add New Meeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView2"
@@ -23,55 +23,64 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:ems="10"
         android:layout_marginTop="24dp"
-        android:id="@+id/tbGroupName"
+        android:id="@+id/tbMemberName"
         android:layout_below="@+id/textView2"
-        android:layout_toRightOf="@+id/textView3"
-        android:layout_toEndOf="@+id/textView3"
+        android:layout_toRightOf="@+id/tvMemberName"
+        android:layout_toEndOf="@+id/tvMemberName"
         android:layout_marginLeft="19dp"
         android:layout_marginStart="19dp" />
 
     <TextView
-        android:text="Group Name"
+        android:text="Meeting Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/textView3"
-        android:layout_alignBaseline="@+id/tbGroupName"
-        android:layout_alignBottom="@+id/tbGroupName"
+        android:id="@+id/tvMemberName"
+        android:layout_alignBaseline="@+id/tbMemberName"
+        android:layout_alignBottom="@+id/tbMemberName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <Button
-        android:text="Create Group"
+        android:text="Create Meeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="13dp"
-        android:id="@+id/button"
+        android:id="@+id/btnCreateGroup"
         android:onClick="createGroup" />
-
-    <TextView
-        android:text="Add Members"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tbGroupName"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="28dp"
-        android:id="@+id/textView4" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
+        android:inputType="number"
         android:ems="10"
         android:id="@+id/editText2"
-        android:layout_alignBaseline="@+id/textView4"
-        android:layout_alignBottom="@+id/textView4"
-        android:layout_alignLeft="@+id/tbGroupName"
-        android:layout_alignStart="@+id/tbGroupName"
-        android:hint="example@gmail.com" />
+        android:layout_below="@+id/tbMemberName"
+        android:layout_alignLeft="@+id/tbMemberName"
+        android:layout_alignStart="@+id/tbMemberName"
+        android:layout_marginTop="15dp" />
+
+    <TextView
+        android:text="Length of Meeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView4"
+        android:layout_alignBaseline="@+id/editText2"
+        android:layout_alignBottom="@+id/editText2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <DatePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="16dp"
+        android:id="@+id/datePicker2" />
+
 </RelativeLayout>
