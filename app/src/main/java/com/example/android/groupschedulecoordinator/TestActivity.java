@@ -109,7 +109,6 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
 
         mProgress = new ProgressDialog(this);
         mProgress.setMessage("Calling Google Calendar API ...");
-        String apiKey = "AIzaSyB_J3Otk4GDjNu22ZCuJp9hxZyXvhiMqzw";
         setContentView(activityLayout);
 
         // Initialize credentials and service object.
@@ -360,24 +359,24 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
             HashMap<String,ArrayList<Integer>> freeTimeMap = new HashMap<String, ArrayList<Integer>>();
             java.util.GregorianCalendar currentDay = new GregorianCalendar();
             java.util.GregorianCalendar rangeEnd = new GregorianCalendar();
-            rangeEnd.add(currentDay.DAY_OF_MONTH,14);
-            rangeEnd.set(rangeEnd.HOUR_OF_DAY,23);
-            rangeEnd.set(rangeEnd.MINUTE,59);
-            rangeEnd.set(rangeEnd.SECOND,59);
+            rangeEnd.add(java.util.Calendar.DAY_OF_MONTH,14);
+            rangeEnd.set(java.util.Calendar.HOUR_OF_DAY,23);
+            rangeEnd.set(java.util.Calendar.MINUTE,59);
+            rangeEnd.set(java.util.Calendar.SECOND,59);
             DateTime timeMin = new DateTime(currentDay.getTime());
             DateTime timeMax = new DateTime(rangeEnd.getTime());
 
             for(int i=0;i<15;i++) {
-                String newDay = currentDay.get(currentDay.MONTH) + "-" +
-                        currentDay.get(currentDay.DAY_OF_MONTH) + "-" +
-                        currentDay.get(currentDay.YEAR);
+                String newDay = currentDay.get(java.util.Calendar.MONTH) + "-" +
+                        currentDay.get(java.util.Calendar.DAY_OF_MONTH) + "-" +
+                        currentDay.get(java.util.Calendar.YEAR);
                 System.out.printf("Day: %s\n",newDay);
                 ArrayList<Integer> fillList = new ArrayList<Integer>(48);
                 for(int j=0;j<48;j++){
                     fillList.add(0);
                 }
                 freeTimeMap.put(newDay,fillList);
-                currentDay.add(currentDay.DAY_OF_MONTH,1);
+                currentDay.add(java.util.Calendar.DAY_OF_MONTH,1);
             }
 
             List<String> eventStrings = new ArrayList<String>();
@@ -420,20 +419,20 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
                 GregorianCalendar endPCalendar = new GregorianCalendar();
                 endPCalendar.setTime(endPeriod);
 
-                String day = startPCalendar.get(startPCalendar.MONTH) +"-"+
-                        startPCalendar.get(startPCalendar.DAY_OF_MONTH)+"-"+
-                        startPCalendar.get(startPCalendar.YEAR);
+                String day = startPCalendar.get(java.util.Calendar.MONTH) +"-"+
+                        startPCalendar.get(java.util.Calendar.DAY_OF_MONTH)+"-"+
+                        startPCalendar.get(java.util.Calendar.YEAR);
 
                 ArrayList<Integer> timeBlockList = freeTimeMap.get(day);
                 if(timeBlockList == null){
                     System.out.println("This shouldn't happen");
                 }
 
-                int timeBlockStart = startPCalendar.get(startPCalendar.HOUR_OF_DAY)*2;
-                if(startPCalendar.get(startPCalendar.MINUTE)>30)
+                int timeBlockStart = startPCalendar.get(java.util.Calendar.HOUR_OF_DAY)*2;
+                if(startPCalendar.get(java.util.Calendar.MINUTE)>30)
                     timeBlockStart++;
-                int timeBlockEnd = endPCalendar.get(endPCalendar.HOUR_OF_DAY)*2;
-                if(endPCalendar.get(endPCalendar.MINUTE)>30)
+                int timeBlockEnd = endPCalendar.get(java.util.Calendar.HOUR_OF_DAY)*2;
+                if(endPCalendar.get(java.util.Calendar.MINUTE)>30)
                     timeBlockEnd++;
 
                 for(int i=timeBlockStart;i<=timeBlockEnd;i++){
