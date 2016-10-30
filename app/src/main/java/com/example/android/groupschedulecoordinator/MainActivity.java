@@ -30,7 +30,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button btn;
-    ListView lv;
+    ListView grouplv;
     ArrayList<String> group_list;
     final Context c = this;
     private static final String TAG = "MainActivity";
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        lv = (ListView) findViewById(R.id.groupList);
+        grouplv = (ListView) findViewById(R.id.groupList);
 
           group_list = new ArrayList<String>();
           group_list.add("Test Group");
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                     android.R.layout.simple_list_item_1,
                     group_list);
 
-            lv.setAdapter(arrayAdapter);
+            grouplv.setAdapter(arrayAdapter);
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -80,11 +80,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        grouplv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                String groupName = (String) lv.getItemAtPosition(position);
+                String groupName = (String) grouplv.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, GroupActivity.class);
                 intent.putExtra("groupName", groupName);
                 startActivity(intent);
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                                         android.R.layout.simple_list_item_1,
                                         group_list);
 
-                                lv.setAdapter(arrayAdapter);
+                                grouplv.setAdapter(arrayAdapter);
                             }
                         })
 
