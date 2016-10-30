@@ -108,17 +108,28 @@ public class LoginScreen extends AppCompatActivity{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //TODO remove this log
+        Log.d("jasonLogs", "onActivityResult: " + requestCode + " " + resultCode + " " + data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
+                //TODO remove this log
+                Log.d("jasonlogs", "successful google auth!");
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
+                //TODO remove this log
+                Log.d("jasonlogs", "got here");
+
+
                 // Google Sign In failed, update UI appropriately
                 // ...
+
+                //TODO don't actually go forwards until auth is completed
+                startActivity(new Intent(LoginScreen.this, MainActivity.class));
+                finish();
             }
         }
     }
