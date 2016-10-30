@@ -72,9 +72,6 @@ public class GroupActivity extends AppCompatActivity {
 
 
 
-
-
-
         lv = (ListView) findViewById(R.id.lvMembers);
         group_list = new ArrayList<String>();
 

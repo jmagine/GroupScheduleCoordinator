@@ -30,68 +30,12 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
-        <!--<android.support.design.widget.TextInputLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<android.support.design.widget.TextInputEditText-->
-                <!--android:id="@+id/user"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:hint="HINT"-->
-                <!--android:imeOptions="actionNext"-->
-                <!--android:maxLines="1" />-->
-
-        <!--</android.support.design.widget.TextInputLayout>-->
-
-        <!--<android.support.design.widget.TextInputLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content">-->
-
-            <!--<android.support.design.widget.TextInputEditText-->
-                <!--android:id="@+id/password"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:hint="HINT"-->
-                <!--android:imeActionId="@+id/login"-->
-                <!--android:imeActionLabel="HINT"-->
-                <!--android:imeOptions="actionUnspecified"-->
-                <!--android:inputType="textPassword"-->
-                <!--android:maxLines="1" />-->
-
-        <!--</android.support.design.widget.TextInputLayout>-->
-
-        <!--Button
-            android:id="@+id/sign_in_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sign in"
-            /> -->
-
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent">
         </com.google.android.gms.common.SignInButton>
 
-
-        <!--<Button-->
-            <!--android:id="@+id/sign_up_button"-->
-            <!--style="?android:textAppearanceSmall"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--android:text="HINT"-->
-            <!--android:textStyle="bold" />-->
-
-        <!--<Button-->
-            <!--android:id="@+id/maps_button"-->
-            <!--style="?android:textAppearanceSmall"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="16dp"-->
-            <!--android:text="Map"-->
-            <!--android:textStyle="bold" />-->
 
     </LinearLayout>
 </LinearLayout>

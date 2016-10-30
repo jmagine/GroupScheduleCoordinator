@@ -97,6 +97,7 @@ public class LoginScreen extends AppCompatActivity{
                 signIn();
             }
         });
+        mGoogleButton.setSize(SignInButton.SIZE_WIDE);
 
     }
 
