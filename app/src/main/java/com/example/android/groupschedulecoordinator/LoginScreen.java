@@ -77,8 +77,12 @@ public class LoginScreen extends AppCompatActivity{
         };
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+<<<<<<< HEAD
                 //.requestIdToken(this.getResources().getString(R.string.server_client_id))
                 .requestIdToken(this.getResources().getString(R.string.server_client_id))
+=======
+                .requestIdToken(getString(R.string.default_web_client_id))
+>>>>>>> 9bbc9f4709a648c58b8ca3b5a44818e4b030763f
                 .requestEmail()
                 .build();
 

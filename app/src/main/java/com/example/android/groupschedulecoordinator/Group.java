@@ -1,6 +1,10 @@
 package com.example.android.groupschedulecoordinator;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Emily on 10/27/2016.
@@ -36,7 +40,15 @@ public class Group {
             members.remove(members.indexOf(userID));
     }
 
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("groupID", groupID);
+        result.put("members", members);
+        result.put("events", events);
 
+        return result;
+    }
 
 
 
