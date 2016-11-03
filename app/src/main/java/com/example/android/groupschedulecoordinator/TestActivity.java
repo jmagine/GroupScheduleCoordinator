@@ -433,10 +433,13 @@ public class TestActivity extends Activity implements EasyPermissions.Permission
                 if(startPCalendar.get(java.util.Calendar.MINUTE)>30)
                     timeBlockStart++;
                 int timeBlockEnd = endPCalendar.get(java.util.Calendar.HOUR_OF_DAY)*2;
-                if(endPCalendar.get(java.util.Calendar.MINUTE)>30)
+                if(endPCalendar.get(java.util.Calendar.MINUTE)>0) {
                     timeBlockEnd++;
+                    if(endPCalendar.get(java.util.Calendar.MINUTE)>30)
+                        timeBlockEnd++;
+                }
 
-                for(int i=timeBlockStart;i<=timeBlockEnd;i++){
+                for(int i=timeBlockStart;i<timeBlockEnd;i++){
                     timeBlockList.set(i,timeBlockList.get(i)+1);
                 }
 

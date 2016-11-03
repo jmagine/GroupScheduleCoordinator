@@ -33,7 +33,7 @@ public class User {
             groups.add(groupID);
     }
 
-    public void removeSelfFromGoup(String group){
+    public void removeSelfFromGroup(String group){
         if(groups.indexOf(group)!=-1)
             groups.remove(groups.indexOf(group));
     }
