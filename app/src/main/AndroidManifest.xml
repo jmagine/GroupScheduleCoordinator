@@ -28,7 +28,9 @@
             android:name=".Main0Activity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-        <activity android:name=".AddMemberToGroup" />
+        <activity
+          android:name=".AddMemberToGroup"
+          android:parentActivityName=".GroupActivity" />
         <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"

@@ -62,7 +62,7 @@ public class AddMemberToGroup extends AppCompatActivity {
 
             //intent.putExtra("memberName", memberName);
             intent.putStringArrayListExtra("groupList", group_list);
-
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
 

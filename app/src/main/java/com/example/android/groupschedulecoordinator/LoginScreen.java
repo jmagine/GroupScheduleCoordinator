@@ -77,7 +77,7 @@ public class LoginScreen extends AppCompatActivity{
         };
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
@@ -98,7 +98,6 @@ public class LoginScreen extends AppCompatActivity{
             }
         });
         mGoogleButton.setSize(SignInButton.SIZE_WIDE);
-
     }
 
     private void signIn() {
@@ -122,7 +121,7 @@ public class LoginScreen extends AppCompatActivity{
                 firebaseAuthWithGoogle(account);
             } else {
                 //TODO remove this log
-                Log.d("jasonlogs", "got here");
+                Log.d("jasonlogs", "failed google auth.");
 
 
                 // Google Sign In failed, update UI appropriately
@@ -164,5 +163,13 @@ public class LoginScreen extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
         mFirebaseAuth.addAuthStateListener(mAuthListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mAuthListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthListener);
+        }
     }
 }
