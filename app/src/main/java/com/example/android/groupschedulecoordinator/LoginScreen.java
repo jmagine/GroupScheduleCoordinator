@@ -128,8 +128,8 @@ public class LoginScreen extends AppCompatActivity{
                 // ...
 
                 //TODO don't actually go forwards until auth is completed
-                startActivity(new Intent(LoginScreen.this, MainActivity.class));
-                finish();
+                //startActivity(new Intent(LoginScreen.this, MainActivity.class));
+                //finish();
             }
         }
     }
@@ -171,5 +171,9 @@ public class LoginScreen extends AppCompatActivity{
         if (mAuthListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthListener);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 }
