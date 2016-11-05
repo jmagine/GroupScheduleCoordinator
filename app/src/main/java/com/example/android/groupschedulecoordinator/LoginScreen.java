@@ -109,10 +109,15 @@ public class LoginScreen extends AppCompatActivity{
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //TODO remove this log
+        Log.d("jasonlogs", "server_client_id     : " + this.getResources().getString(R.string.server_client_id));
+        Log.d("jasonlogs", "default_web_client_id: " + getApplicationContext().getString(R.string.default_web_client_id));
         Log.d("jasonLogs", "onActivityResult: " + requestCode + " " + resultCode + " " + data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.d("jasonlogs", "result: " + result.getStatus());
+
             if (result.isSuccess()) {
                 //TODO remove this log
                 Log.d("jasonlogs", "successful google auth!");
