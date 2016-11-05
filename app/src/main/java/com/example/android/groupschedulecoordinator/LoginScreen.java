@@ -6,9 +6,16 @@ package com.example.android.groupschedulecoordinator;
  */
 
 
+import android.*;
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,6 +46,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.*;
 
 
 public class LoginScreen extends AppCompatActivity{
@@ -46,6 +54,7 @@ public class LoginScreen extends AppCompatActivity{
     //global var
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "SignInActivity";
+    private final int REQUEST_CODE_PERMISSIONS = 123;
 
 
     private FirebaseAuth mFirebaseAuth;
@@ -53,6 +62,7 @@ public class LoginScreen extends AppCompatActivity{
     private FirebaseUser mFirebaseUser;
 
 
+    private int permissionCode;
     private GoogleApiClient mGoogleApiClient;
     private SignInButton mGoogleButton;
     private String mUser;
@@ -94,7 +104,8 @@ public class LoginScreen extends AppCompatActivity{
         mGoogleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                signIn();
+                dummyPermission();
+                //signIn();
             }
         });
         mGoogleButton.setSize(SignInButton.SIZE_WIDE);
@@ -180,5 +191,51 @@ public class LoginScreen extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
+    }
+
+    /* Prompts user for access
+        Popup dialog prompts user that contacts access is needed
+        @success, user allows contacts, signIn() is called
+        @failure, user denies, toast text shows
+     */
+    private void dummyPermission(){
+        int dummyPermission = checkSelfPermission(Manifest.permission.GET_ACCOUNTS);
+        if (dummyPermission != PackageManager.PERMISSION_GRANTED) {
+            if(shouldShowRequestPermissionRationale(Manifest.permission.GET_ACCOUNTS)){
+                needPermissions("You need to allow access to Contacts", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestPermissions(new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_PERMISSIONS);
+                    }
+                });
+                return;
+            }
+            requestPermissions(new String[] {Manifest.permission.GET_ACCOUNTS}, REQUEST_CODE_PERMISSIONS);
+            return;
+        }
+        signIn();
+    }
+
+    private void needPermissions(String message, DialogInterface.OnClickListener okListener){
+        new AlertDialog.Builder(LoginScreen.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case REQUEST_CODE_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    signIn();
+                }else{
+                    Toast.makeText(LoginScreen.this, "Please allow access to contacts", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }
