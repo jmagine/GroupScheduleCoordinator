@@ -1,9 +1,16 @@
 package com.example.android.groupschedulecoordinator;
 
+import android.accounts.AccountManager;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.nfc.Tag;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
@@ -21,11 +28,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.calendar.Calendar;
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.FreeBusyCalendar;
+import com.google.api.services.calendar.model.FreeBusyRequest;
+import com.google.api.services.calendar.model.FreeBusyRequestItem;
+import com.google.api.services.calendar.model.FreeBusyResponse;
+import com.google.api.services.calendar.model.TimePeriod;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,9 +69,19 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> group_list;
     final Context c = this;
     private static final String TAG = "MainActivity";
+    private static final String PREF_ACCOUNT_NAME = "accountName";
 
+    static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
+    private static final String[] SCOPES = { CalendarScopes.CALENDAR };
+
+
+    ProgressDialog mProgress;
     private Button logout;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+    private GoogleAccountCredential mCredential;
+    private String userName;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,6 +181,58 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        mProgress = new ProgressDialog(this);
+        mProgress.setMessage("Calling Google Calendar API ...");
+
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
+
+        Intent data = this.getIntent();
+        if( data!=null){
+            System.out.println("NONNULL EXTRAS");
+            userName = mAuth.getCurrentUser().getEmail();
+            SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+            if (userName != null) {
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(PREF_ACCOUNT_NAME, userName);
+                editor.apply();
+            }
+        }
+        if(userName==null){
+            Log.e("Error: ","null account name");
+        }
+        mCredential.setSelectedAccountName(userName);
+        System.out.println("CURRENT USER: "+userName);
+        System.out.println("ATTEMPTING");
+        System.out.println(mCredential.getSelectedAccountName());
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        ValueEventListener postListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            // Get CustomUser object and use the values to update the UI
+            System.out.println("Data change for "+userName);
+            currentUser = dataSnapshot.getValue(User.class);
+            if(currentUser==null){
+                System.out.println("Making new user");
+                currentUser = new User(userName);
+            }
+
+        }
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            // Getting Post failed, log a message
+            Log.w(TAG, "loadUser:onCancelled", databaseError.toException());
+            // ...
+        }
+    };
+
+        mDatabase.addListenerForSingleValueEvent(postListener);
 
     }
 
@@ -146,4 +243,236 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+        private com.google.api.services.calendar.Calendar mService = null;
+        private Exception mLastError = null;
+
+        public MakeRequestTask(GoogleAccountCredential credential) {
+            HttpTransport transport = AndroidHttp.newCompatibleTransport();
+            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            mService = new com.google.api.services.calendar.Calendar.Builder(
+                    transport, jsonFactory, credential)
+                    .setApplicationName("Coordinatr")
+                    .build();
+        }
+
+        /**
+         * Background task to call Google Calendar API.
+         * @param params no parameters needed for this task.
+         */
+        @Override
+        protected List<String> doInBackground(Void... params) {
+            try {
+                return getDataFromApi();
+            } catch (Exception e) {
+                mLastError = e;
+                cancel(true);
+                return null;
+            }
+        }
+
+        /**
+         * Fetch a list of the next 10 events from the primary calendar.
+         * @return List of Strings describing returned events.
+         * @throws IOException
+         */
+        private List<String> getDataFromApi() throws IOException {
+            // List the next 10 events from the primary calendar.
+            HashMap<String,ArrayList<Integer>> freeTimeMap = new HashMap<String, ArrayList<Integer>>();
+            java.util.GregorianCalendar currentDay = new GregorianCalendar();
+            java.util.GregorianCalendar rangeEnd = new GregorianCalendar();
+            rangeEnd.add(java.util.Calendar.DAY_OF_MONTH,14);
+            rangeEnd.set(java.util.Calendar.HOUR_OF_DAY,23);
+            rangeEnd.set(java.util.Calendar.MINUTE,59);
+            rangeEnd.set(java.util.Calendar.SECOND,59);
+            DateTime timeMin = new DateTime(currentDay.getTime());
+            DateTime timeMax = new DateTime(rangeEnd.getTime());
+
+            for(int i=0;i<15;i++) {
+                String newDay = currentDay.get(java.util.Calendar.MONTH) + "-" +
+                        currentDay.get(java.util.Calendar.DAY_OF_MONTH) + "-" +
+                        currentDay.get(java.util.Calendar.YEAR);
+                System.out.printf("Day: %s\n",newDay);
+                ArrayList<Integer> fillList = new ArrayList<Integer>(48);
+                for(int j=0;j<48;j++){
+                    fillList.add(0);
+                }
+                freeTimeMap.put(newDay,fillList);
+                currentDay.add(java.util.Calendar.DAY_OF_MONTH,1);
+            }
+
+            List<String> eventStrings = new ArrayList<String>();
+            FreeBusyRequestItem requestItem = new FreeBusyRequestItem().setId("primary");
+            List<FreeBusyRequestItem> listOfRequest = new ArrayList<FreeBusyRequestItem>();
+            listOfRequest.add(requestItem);
+            FreeBusyRequest freeBusyRequest = new FreeBusyRequest().setTimeMax(timeMax).setTimeMin(timeMin).setTimeZone("America/Los_Angeles").setItems(listOfRequest);
+
+            Calendar.Freebusy.Query freebusy = mService.freebusy().query(freeBusyRequest);
+
+            FreeBusyResponse busyTimes = freebusy.execute();
+            Map<String,FreeBusyCalendar> calendarMap = busyTimes.getCalendars();
+
+            /*
+            Events events = mService.events().list("primary")
+                    .setMaxResults(10)
+                    .setTimeMin(now)
+                    .setOrderBy("startTime")
+                    .setSingleEvents(true)
+                    .execute();
+            List<Event> items = events.getItems();
+
+            for (Event event : items) {
+                DateTime start = event.getStart().getDateTime();
+                if (start == null) {
+                    // All-day events don't have start times, so just use
+                    // the start date.
+                    start = event.getStart().getDate();
+                }
+                eventStrings.add(
+                        String.format("%s (%s)", event.getSummary(), start));
+            }
+            */
+            List<TimePeriod> timeRanges = calendarMap.get("primary").getBusy();
+            for (TimePeriod time:timeRanges){
+                Date startPeriod = new Date(time.getStart().getValue());
+                Date endPeriod = new Date(time.getEnd().getValue());
+                GregorianCalendar startPCalendar = new GregorianCalendar();
+                startPCalendar.setTime(startPeriod);
+                GregorianCalendar endPCalendar = new GregorianCalendar();
+                endPCalendar.setTime(endPeriod);
+
+                String day = startPCalendar.get(java.util.Calendar.MONTH) +"-"+
+                        startPCalendar.get(java.util.Calendar.DAY_OF_MONTH)+"-"+
+                        startPCalendar.get(java.util.Calendar.YEAR);
+
+                ArrayList<Integer> timeBlockList = freeTimeMap.get(day);
+                if(timeBlockList == null){
+                    System.out.println("This shouldn't happen");
+                }
+
+                int timeBlockStart = startPCalendar.get(java.util.Calendar.HOUR_OF_DAY)*2;
+                if(startPCalendar.get(java.util.Calendar.MINUTE)>30)
+                    timeBlockStart++;
+                int timeBlockEnd = endPCalendar.get(java.util.Calendar.HOUR_OF_DAY)*2;
+                if(endPCalendar.get(java.util.Calendar.MINUTE)>0) {
+                    timeBlockEnd++;
+                    if(endPCalendar.get(java.util.Calendar.MINUTE)>30)
+                        timeBlockEnd++;
+                }
+
+                for(int i=timeBlockStart;i<timeBlockEnd;i++){
+                    timeBlockList.set(i,timeBlockList.get(i)+1);
+                }
+
+                System.out.println(timeBlockList.toString());
+
+                System.out.println(day);
+
+                System.out.printf("%s, %s - %s \n",day,timeBlockStart,timeBlockEnd);
+
+                eventStrings.add(startPeriod.toString());
+                eventStrings.add(endPeriod.toString());
+            }
+
+            /*
+            for (Map.Entry<String,FreeBusyCalendar> key: calendarMap.entrySet()){
+                System.out.println(key.getKey());
+                eventStrings.add(
+                        String.format("%s", calendarMap.get(key.getKey()).toPrettyString() ));
+
+            }*/
+
+            return eventStrings;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+            //mOutputText.setText("");
+            mProgress.show();
+        }
+
+        @Override
+        protected void onPostExecute(List<String> output) {
+            //mProgress.dismiss();
+            if (output == null || output.size() == 0) {
+                //mOutputText.setText("No results returned.");
+            } else {
+                output.add(0, "Data retrieved using the Google Calendar API:");
+                //mOutputText.setText(TextUtils.join("\n", output));
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            mProgress.dismiss();
+            if (mLastError != null) {
+                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
+                    showGooglePlayServicesAvailabilityErrorDialog(
+                            ((GooglePlayServicesAvailabilityIOException) mLastError)
+                                    .getConnectionStatusCode());
+                } else if (mLastError instanceof UserRecoverableAuthIOException) {
+                    startActivityForResult(
+                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
+                            TestActivity.REQUEST_AUTHORIZATION);
+                } else {
+                    //mOutputText.setText("The following error occurred:\n"
+                    //+ mLastError.getMessage());
+                }
+            } else {
+                //mOutputText.setText("Request cancelled.");
+            }
+        }
+    }
+
+    private boolean isDeviceOnline() {
+        ConnectivityManager connMgr =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return (networkInfo != null && networkInfo.isConnected());
+    }
+
+    /**
+     * Check that Google Play services APK is installed and up to date.
+     * @return true if Google Play Services is available and up to
+     *     date on this device; false otherwise.
+     */
+    private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(this);
+        return connectionStatusCode == ConnectionResult.SUCCESS;
+    }
+
+    /**
+     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
+     * Play Services installation via a user dialog, if possible.
+     */
+    private void acquireGooglePlayServices() {
+        GoogleApiAvailability apiAvailability =
+                GoogleApiAvailability.getInstance();
+        final int connectionStatusCode =
+                apiAvailability.isGooglePlayServicesAvailable(this);
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode);
+        }
+    }
+
+
+    /**
+     * Display an error dialog showing that Google Play Services is missing
+     * or out of date.
+     * @param connectionStatusCode code describing the presence (or lack of)
+     *     Google Play Services on this device.
+     */
+    void showGooglePlayServicesAvailabilityErrorDialog(
+            final int connectionStatusCode) {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        Dialog dialog = apiAvailability.getErrorDialog(
+                MainActivity.this,
+                connectionStatusCode,
+                REQUEST_GOOGLE_PLAY_SERVICES);
+        dialog.show();
+    }
 }

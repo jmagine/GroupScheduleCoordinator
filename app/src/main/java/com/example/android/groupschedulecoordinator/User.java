@@ -15,11 +15,13 @@ public class User {
     private ArrayList<String> groups;
     private HashMap<String, ArrayList<Integer>> freeTimes;
 
-    public void User(){
+    public User(){
     }
 
-    public void User(String name){
+    public User(String name){
         userName = name;
+        groups = new ArrayList<String>(10);
+        freeTimes = new HashMap<String,ArrayList<Integer>>();
     }
 
     public HashMap<String,ArrayList<Integer>> getTimes(){

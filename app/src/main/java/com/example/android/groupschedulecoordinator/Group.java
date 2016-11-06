@@ -15,6 +15,13 @@ public class Group {
     private ArrayList<String> members;
     private ArrayList<String> events;
 
+    public Group(){
+    }
+
+    public Group(String str){
+        groupID = str;
+    }
+
     public void addMember(String newperson){
         if(members.indexOf(newperson)==-1)
             members.add(newperson);
@@ -49,7 +56,5 @@ public class Group {
 
         return result;
     }
-
-
 
 }
