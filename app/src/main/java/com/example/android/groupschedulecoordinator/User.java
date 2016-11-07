@@ -1,6 +1,8 @@
 package com.example.android.groupschedulecoordinator;
 
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.firebase.database.Exclude;
@@ -12,9 +14,8 @@ import java.util.Map;
 /**
  * Created by Emily on 10/27/2016.
  */
-public class User {
+public class User implements Parcelable {
 
-    //groups user belongs to
     private String userName;
     private ArrayList<String> pendingGroups;
     private ArrayList<String> acceptedGroups;
@@ -66,6 +67,44 @@ public class User {
             Log.e("Error: ",e.toString());
         }
     }
+
+    /* Parcelable Methods **/
+    /*
+     * Name: describeContents()
+     * Return: bitmask indicating the set of special objects
+     */
+    public int describeContents(){
+        return 0; //TODO
+    }
+
+    /* flatten User into parcel */
+    public void writeToParcel(Parcel out, int flags) {
+        out.writeString(userName);
+        out.writeList(pendingGroups);
+        out.writeList(acceptedGroups);
+        out.writeMap(freeTimes);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    private User(Parcel in) {
+        userName = in.readString();
+        in.readList(pendingGroups, null); //?????
+        in.readList(acceptedGroups, null); //???
+        in.readMap(freeTimes, null); //????
+    }
+
+    /** End Parcelable Methods **/
+
 
     @Exclude
     public void addToPendingGroup(String groupID){
