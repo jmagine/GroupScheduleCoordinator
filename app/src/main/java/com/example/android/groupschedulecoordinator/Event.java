@@ -11,6 +11,7 @@ import java.util.Map;
 public class Event {
 
     private String eventID;
+    private String hostID;
     private int start;
     private int end;
     private boolean isReady;
@@ -28,6 +29,8 @@ public class Event {
         this.end = 0;
         isReady = false;
     }
+
+    public String getHostID() { return hostID; }
 
     public String getEventID(){
         return eventID;
@@ -52,6 +55,8 @@ public class Event {
     public ArrayList<String> getCompletedUsers(){
         return completedUsers;
     }
+
+    public void setHostID(String id) { hostID = id; }
 
     public void setStart(int start1){
         start = start1;
