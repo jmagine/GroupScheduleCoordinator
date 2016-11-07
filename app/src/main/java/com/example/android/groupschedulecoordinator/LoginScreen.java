@@ -11,7 +11,6 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
@@ -19,7 +18,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -38,20 +36,6 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
-import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.FreeBusyCalendar;
-import com.google.api.services.calendar.model.FreeBusyRequest;
-import com.google.api.services.calendar.model.FreeBusyRequestItem;
-import com.google.api.services.calendar.model.FreeBusyResponse;
-import com.google.api.services.calendar.model.TimePeriod;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -59,11 +43,8 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +57,7 @@ public class LoginScreen extends AppCompatActivity{
     private static final int RC_SIGN_IN = 1;
     private static final String TAG = "SignInActivity";
     private final int REQUEST_CODE_PERMISSIONS = 123;
+    private final int REQUEST_CODE_MULTI = 124;
 
 
     private FirebaseAuth mFirebaseAuth;
@@ -125,8 +107,9 @@ public class LoginScreen extends AppCompatActivity{
         mGoogleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dummyPermission();
+                //dummyPermission();
                 //signIn();
+                multiPermission();
             }
         });
         mGoogleButton.setSize(SignInButton.SIZE_WIDE);
@@ -237,6 +220,54 @@ public class LoginScreen extends AppCompatActivity{
         signIn();
     }
 
+    /*
+        Requests permissions to access CONTACTS and CALENDER
+        case 1: user allows both permissions --> call signIn()
+        case 2: user denies 1 option --> stays on main screen and prompts user for access
+                to the permission that was denied
+        case 3: user denies both options --> prompts for both
+     */
+    private void multiPermission(){
+        List<String> permissionsNeeded = new ArrayList<>();
+
+        final List<String> permissionList = new ArrayList<>();
+        if(!addPermissions(permissionList, Manifest.permission.GET_ACCOUNTS))
+            permissionsNeeded.add("ACCOUNTS");
+        if (!addPermissions(permissionList,Manifest.permission.READ_CALENDAR))
+            permissionsNeeded.add("READ_CALENDER");
+        if(!addPermissions(permissionList, Manifest.permission.WRITE_CALENDAR))
+            permissionsNeeded.add("WRITE_CALENDER");
+
+        if (permissionList.size() > 0) {
+            if (permissionsNeeded.size() > 0) {
+                String message = "You need to provide access to " + permissionsNeeded.get(0);
+                for(int i = 1; i < permissionsNeeded.size(); i++)
+                    message = message + ", " + permissionsNeeded.get(i);
+                needPermissions(message, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        requestPermissions(permissionList.toArray(new String[permissionList.size()]), REQUEST_CODE_MULTI);
+                    }
+                });
+                return;
+            }
+            requestPermissions(permissionList.toArray(new String[permissionList.size()]), REQUEST_CODE_MULTI);
+            return;
+        }
+        signIn();
+    }
+
+    /*helper for adding permissions*/
+    private boolean addPermissions(List<String> pList, String permission){
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            pList.add(permission);
+            if(shouldShowRequestPermissionRationale(permission)){
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void needPermissions(String message, DialogInterface.OnClickListener okListener){
         new AlertDialog.Builder(LoginScreen.this)
                 .setMessage(message)
@@ -253,6 +284,23 @@ public class LoginScreen extends AppCompatActivity{
                     signIn();
                 }else{
                     Toast.makeText(LoginScreen.this, "Please allow access to contacts", Toast.LENGTH_SHORT).show();
+                }
+                break;
+
+            case REQUEST_CODE_MULTI:
+                Map<String,Integer> perms = new HashMap<String,Integer>();
+                perms.put(Manifest.permission.GET_ACCOUNTS, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_CALENDAR, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_CALENDAR, PackageManager.PERMISSION_GRANTED);
+
+                for(int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+                if((perms.get(Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED)
+                        && (perms.get(Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
+                        && (perms.get(Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED)){
+                    signIn();
+                }else{
+                    Toast.makeText(LoginScreen.this, "Please provide the necessary permissions", Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
