@@ -27,6 +27,31 @@ public class Group {
             members.add(newperson);
     }
 
+    public String getGroupID(){
+        return groupID;
+    }
+
+    public ArrayList<String> getMembers(){
+        return members;
+    }
+
+    public ArrayList<String> getEvents(){
+        return events;
+    }
+
+    public void setGroupID(String group){
+        groupID=group;
+    }
+
+    public void setMembers(ArrayList<String> inList){
+        members = inList;
+    }
+
+    public void setEvents(ArrayList<String> inList){
+        events = inList;
+    }
+
+    @Exclude
     public void deleteMember(String newperson){
         for(int i = 0; i < members.size(); i++){
             if (members.get(i).equals(newperson))
@@ -37,11 +62,13 @@ public class Group {
         }
     }
 
+    @Exclude
     public void addEvent(String event){
         if(events.indexOf(event)==-1)
             events.add(event);
     }
 
+    @Exclude
     public void removeUser(String userID){
         if(members.indexOf(userID)!=-1)
             members.remove(members.indexOf(userID));
@@ -56,5 +83,4 @@ public class Group {
 
         return result;
     }
-
 }

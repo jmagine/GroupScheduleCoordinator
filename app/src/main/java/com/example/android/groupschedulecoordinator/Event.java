@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Event {
 
-    private String name;
+    private String eventID;
     private int start;
     private int end;
     private boolean isReady;
@@ -23,35 +23,69 @@ public class Event {
     public Event(String name, ArrayList<String> pendingU) {
         pendingUsers = new ArrayList<String>(pendingU);
         completedUsers = new ArrayList<String>();
-        this.name = name;
+        this.eventID = name;
         this.start = 0;
         this.end = 0;
         isReady = false;
     }
 
-    public void setTImes(int startT, int endT){
-        start = startT;
-        end = endT;
+    public String getEventID(){
+        return eventID;
     }
 
+    public int getStart(){
+        return start;
+    }
+
+    public int getEnd(){
+        return end;
+    }
+
+    public boolean getReady(){
+        return isReady;
+    }
+
+    public ArrayList<String> getPendingUsers(){
+        return pendingUsers;
+    }
+
+    public ArrayList<String> getCompletedUsers(){
+        return completedUsers;
+    }
+
+    public void setStart(int start1){
+        start = start1;
+    }
+
+    public void setEnd(int end1){
+        end = end1;
+    }
+
+    public void setReady(boolean id){
+        isReady = id;
+    }
+
+    public void setPendingUsers(ArrayList<String> in){
+        pendingUsers = in;
+    }
+
+    public void setCompletedUsers(ArrayList<String> in){
+        completedUsers = in;
+    }
+
+    @Exclude
     public boolean moveUser(String user){
-        for(int i=0;i<pendingUsers.size();i++){
-            if(pendingUsers.get(i).equals(user)){
-                completedUsers.add(user);
-                pendingUsers.remove(i);
-                if(pendingUsers.size()==0){
-                    isReady = true;
-                }
-                break;
-            }
-        }
+        if(pendingUsers.indexOf(user)!=-1)
+            pendingUsers.remove(pendingUsers.indexOf(user));
+        if(completedUsers.indexOf(user)==-1)
+            completedUsers.add(user);
         return isReady;
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("name", name);
+        result.put("name", eventID);
         result.put("start", start);
         result.put("end", end);
         result.put("isReady", isReady);

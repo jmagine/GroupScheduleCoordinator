@@ -79,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     private Button logout;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
+    private DatabaseReference mUsersReference;
+    private ValueEventListener mListener;
     private GoogleAccountCredential mCredential;
     private String userName;
     private User currentUser;
@@ -182,47 +184,53 @@ public class MainActivity extends AppCompatActivity {
 
         });
         mProgress = new ProgressDialog(this);
-        mProgress.setMessage("Calling Google Calendar API ...");
+        mProgress.setMessage("Updating database");
 
         mCredential = GoogleAccountCredential.usingOAuth2(
                 getApplicationContext(), Arrays.asList(SCOPES))
                 .setBackOff(new ExponentialBackOff());
 
-        Intent data = this.getIntent();
-        if( data!=null){
-            System.out.println("NONNULL EXTRAS");
-            userName = mAuth.getCurrentUser().getEmail();
-            SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
-            if (userName != null) {
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(PREF_ACCOUNT_NAME, userName);
-                editor.apply();
-            }
+        System.out.println("NONNULL EXTRAS");
+        userName = mAuth.getCurrentUser().getEmail();
+        SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+        if (userName != null) {
+            SharedPreferences.Editor editor = settings.edit();
+            editor.putString(PREF_ACCOUNT_NAME, userName);
+            editor.apply();
         }
+
         if(userName==null){
             Log.e("Error: ","null account name");
         }
         mCredential.setSelectedAccountName(userName);
+        currentUser = new User(userName);
         System.out.println("CURRENT USER: "+userName);
         System.out.println("ATTEMPTING");
         System.out.println(mCredential.getSelectedAccountName());
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        System.out.println(mDatabase.toString());
+        mUsersReference = mDatabase.child("users").child(encodeEmailKey(userName));
+        System.out.println(mUsersReference.toString());
+
     }
 
     @Override
     protected void onStart(){
         super.onStart();
-        ValueEventListener postListener = new ValueEventListener() {
+        ValueEventListener dataListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            // Get CustomUser object and use the values to update the UI
-            System.out.println("Data change for "+userName);
-            currentUser = dataSnapshot.getValue(User.class);
-            if(currentUser==null){
-                System.out.println("Making new user");
-                currentUser = new User(userName);
+            if (dataSnapshot.exists()){
+                // Get CustomUser object and use the values to update the UI
+                System.out.println("Data change for " + userName);
+                System.out.println("Data: "+dataSnapshot.toString());
+                User tempUser = dataSnapshot.getValue(User.class);
+                currentUser.setFreeTimes(tempUser.getFreeTimes());
             }
-
+            else{
+                System.out.println(dataSnapshot.toString()+"Does not exist");
+                mUsersReference.setValue(currentUser);
+            }
         }
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -231,19 +239,34 @@ public class MainActivity extends AppCompatActivity {
             // ...
         }
     };
-
-        mDatabase.addListenerForSingleValueEvent(postListener);
-
+        mUsersReference.addListenerForSingleValueEvent(dataListener);
+        mListener = dataListener;
+        userUpdate();
+        System.out.println("Added listener");
     }
 
-    //public
+    @Override
+    protected void onStop(){
+        super.onStop();
+        mUsersReference.removeEventListener(mListener);
+    }
+
+    private void userUpdate(){
+        MakeRequestTask makeRequestTask = new MakeRequestTask(mCredential);
+        try {
+            makeRequestTask.execute();
+        }
+        catch(Exception e){
+            Log.e("GetDataFromAPI",e.toString());
+        }
+    }
 
     @Override
     public void onBackPressed() {
     }
 
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+    private class MakeRequestTask extends AsyncTask<Void, Void, HashMap<String,ArrayList<Integer>>> {
         private com.google.api.services.calendar.Calendar mService = null;
         private Exception mLastError = null;
 
@@ -261,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
          * @param params no parameters needed for this task.
          */
         @Override
-        protected List<String> doInBackground(Void... params) {
+        protected HashMap<String,ArrayList<Integer>> doInBackground(Void... params) {
             try {
                 return getDataFromApi();
             } catch (Exception e) {
@@ -276,9 +299,10 @@ public class MainActivity extends AppCompatActivity {
          * @return List of Strings describing returned events.
          * @throws IOException
          */
-        private List<String> getDataFromApi() throws IOException {
-            // List the next 10 events from the primary calendar.
+        private HashMap<String,ArrayList<Integer>> getDataFromApi() throws IOException {
             HashMap<String,ArrayList<Integer>> freeTimeMap = new HashMap<String, ArrayList<Integer>>();
+
+            //Making it so that we know the freeTimes of the user for next 2 weeks
             java.util.GregorianCalendar currentDay = new GregorianCalendar();
             java.util.GregorianCalendar rangeEnd = new GregorianCalendar();
             rangeEnd.add(java.util.Calendar.DAY_OF_MONTH,14);
@@ -288,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
             DateTime timeMin = new DateTime(currentDay.getTime());
             DateTime timeMax = new DateTime(rangeEnd.getTime());
 
+            //By default, sets them all to completely free days
             for(int i=0;i<15;i++) {
                 String newDay = currentDay.get(java.util.Calendar.MONTH) + "-" +
                         currentDay.get(java.util.Calendar.DAY_OF_MONTH) + "-" +
@@ -301,38 +326,17 @@ public class MainActivity extends AppCompatActivity {
                 currentDay.add(java.util.Calendar.DAY_OF_MONTH,1);
             }
 
-            List<String> eventStrings = new ArrayList<String>();
+            //Creates FreeBusy Request and returns the events in a list of timePeriods
             FreeBusyRequestItem requestItem = new FreeBusyRequestItem().setId("primary");
             List<FreeBusyRequestItem> listOfRequest = new ArrayList<FreeBusyRequestItem>();
             listOfRequest.add(requestItem);
             FreeBusyRequest freeBusyRequest = new FreeBusyRequest().setTimeMax(timeMax).setTimeMin(timeMin).setTimeZone("America/Los_Angeles").setItems(listOfRequest);
-
             Calendar.Freebusy.Query freebusy = mService.freebusy().query(freeBusyRequest);
-
             FreeBusyResponse busyTimes = freebusy.execute();
             Map<String,FreeBusyCalendar> calendarMap = busyTimes.getCalendars();
-
-            /*
-            Events events = mService.events().list("primary")
-                    .setMaxResults(10)
-                    .setTimeMin(now)
-                    .setOrderBy("startTime")
-                    .setSingleEvents(true)
-                    .execute();
-            List<Event> items = events.getItems();
-
-            for (Event event : items) {
-                DateTime start = event.getStart().getDateTime();
-                if (start == null) {
-                    // All-day events don't have start times, so just use
-                    // the start date.
-                    start = event.getStart().getDate();
-                }
-                eventStrings.add(
-                        String.format("%s (%s)", event.getSummary(), start));
-            }
-            */
             List<TimePeriod> timeRanges = calendarMap.get("primary").getBusy();
+
+            //For every time period, fill respective values in the String->ArrayList map
             for (TimePeriod time:timeRanges){
                 Date startPeriod = new Date(time.getStart().getValue());
                 Date endPeriod = new Date(time.getEnd().getValue());
@@ -364,25 +368,15 @@ public class MainActivity extends AppCompatActivity {
                     timeBlockList.set(i,timeBlockList.get(i)+1);
                 }
 
-                System.out.println(timeBlockList.toString());
+                freeTimeMap.put(day,timeBlockList);
 
-                System.out.println(day);
+                System.out.println(timeBlockList.toString());
 
                 System.out.printf("%s, %s - %s \n",day,timeBlockStart,timeBlockEnd);
 
-                eventStrings.add(startPeriod.toString());
-                eventStrings.add(endPeriod.toString());
             }
 
-            /*
-            for (Map.Entry<String,FreeBusyCalendar> key: calendarMap.entrySet()){
-                System.out.println(key.getKey());
-                eventStrings.add(
-                        String.format("%s", calendarMap.get(key.getKey()).toPrettyString() ));
-
-            }*/
-
-            return eventStrings;
+            return freeTimeMap;
         }
 
 
@@ -393,12 +387,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<String> output) {
-            //mProgress.dismiss();
+        protected void onPostExecute(HashMap<String,ArrayList<Integer>> output) {
+            mProgress.dismiss();
             if (output == null || output.size() == 0) {
                 //mOutputText.setText("No results returned.");
             } else {
-                output.add(0, "Data retrieved using the Google Calendar API:");
+                System.out.println(mDatabase.getRoot().toString());
+                currentUser.setFreeTimes(output);
+                mUsersReference.setValue(currentUser);
                 //mOutputText.setText(TextUtils.join("\n", output));
             }
         }
@@ -474,5 +470,13 @@ public class MainActivity extends AppCompatActivity {
                 connectionStatusCode,
                 REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
+    }
+
+    public String encodeEmailKey(String inString){
+        return inString.replaceAll("[.]", "%2E");
+    }
+
+    public String decodeEmailKey(String inString){
+        return inString.replaceAll("[%2E]",".");
     }
 }

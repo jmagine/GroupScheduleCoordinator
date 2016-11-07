@@ -283,7 +283,7 @@ public class LoginScreen extends AppCompatActivity{
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     signIn();
                 }else{
-                    Toast.makeText(LoginScreen.this, "Please allow access to contacts", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginScreen.this, "Please allow access to specified permissions", Toast.LENGTH_SHORT).show();
                 }
                 break;
 
