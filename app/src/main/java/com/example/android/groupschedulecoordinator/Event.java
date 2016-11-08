@@ -10,10 +10,9 @@ import java.util.Map;
  */
 public class Event {
 
-    private String eventID;
+    private String eventName;
     private int start;
     private int end;
-    private boolean isReady;
     private ArrayList<String> pendingUsers;
     private ArrayList<String> completedUsers;
 
@@ -23,14 +22,13 @@ public class Event {
     public Event(String name, ArrayList<String> pendingU) {
         pendingUsers = new ArrayList<String>(pendingU);
         completedUsers = new ArrayList<String>();
-        this.eventID = name;
+        this.eventName = name;
         this.start = 0;
         this.end = 0;
-        isReady = false;
     }
 
-    public String getEventID(){
-        return eventID;
+    public String getEventName(){
+        return eventName;
     }
 
     public int getStart(){
@@ -39,10 +37,6 @@ public class Event {
 
     public int getEnd(){
         return end;
-    }
-
-    public boolean getReady(){
-        return isReady;
     }
 
     public ArrayList<String> getPendingUsers(){
@@ -61,10 +55,6 @@ public class Event {
         end = end1;
     }
 
-    public void setReady(boolean id){
-        isReady = id;
-    }
-
     public void setPendingUsers(ArrayList<String> in){
         pendingUsers = in;
     }
@@ -79,16 +69,15 @@ public class Event {
             pendingUsers.remove(pendingUsers.indexOf(user));
         if(completedUsers.indexOf(user)==-1)
             completedUsers.add(user);
-        return isReady;
+        return pendingUsers.isEmpty();
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("name", eventID);
+        result.put("name", eventName);
         result.put("start", start);
         result.put("end", end);
-        result.put("isReady", isReady);
         result.put("pendingUsers", pendingUsers);
         result.put("completedUsers", completedUsers);
 

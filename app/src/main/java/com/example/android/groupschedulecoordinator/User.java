@@ -16,8 +16,8 @@ public class User {
 
     //groups user belongs to
     private String userName;
-    private ArrayList<String> pendingGroups;
-    private ArrayList<String> acceptedGroups;
+    private HashMap<String,String> pendingGroups;
+    private HashMap<String,String> acceptedGroups;
     private HashMap<String, ArrayList<Integer>> freeTimes;
 
     public User(){
@@ -25,8 +25,8 @@ public class User {
 
     public User(String name){
         userName = name;
-        pendingGroups = new ArrayList<String>(10);
-        acceptedGroups = new ArrayList<String>(10);
+        pendingGroups = new HashMap<String,String>();
+        acceptedGroups = new HashMap<String,String>();
         freeTimes = new HashMap<String,ArrayList<Integer>>();
     }
 
@@ -34,11 +34,11 @@ public class User {
         return userName;
     }
 
-    public ArrayList<String> getPendingGroups(){
+    public HashMap<String,String> getPendingGroups(){
         return pendingGroups;
     }
 
-    public ArrayList<String> getAcceptedGroups(){
+    public HashMap<String,String> getAcceptedGroups(){
         return acceptedGroups;
     }
 
@@ -50,11 +50,11 @@ public class User {
         userName = str;
     }
 
-    public void setPendingGroups(ArrayList<String> grps){
+    public void setPendingGroups(HashMap<String,String> grps){
         pendingGroups = grps;
     }
 
-    public void setAcceptedGroups(ArrayList<String> grps) {
+    public void setAcceptedGroups(HashMap<String,String> grps) {
         acceptedGroups = grps;
     }
 
@@ -68,29 +68,29 @@ public class User {
     }
 
     @Exclude
-    public void addToPendingGroup(String groupID){
-        if(pendingGroups.indexOf(groupID)==-1)
-            pendingGroups.add(groupID);
+    public void addToPendingGroup(String groupID, String groupName){
+        if(pendingGroups.get(groupID)==null)
+            pendingGroups.put(groupID,groupName);
     }
 
     @Exclude
     public void rejectGroup(String groupID){
-        if(pendingGroups.indexOf(groupID)!=-1)
-            pendingGroups.remove(pendingGroups.indexOf(groupID));
+        if(pendingGroups.get(groupID)!=null)
+            pendingGroups.remove(groupID);
     }
 
     @Exclude
-    public void acceptGroup(String groupID){
-        if(pendingGroups.indexOf(groupID) !=-1)
-            pendingGroups.remove(pendingGroups.indexOf(groupID));
-        if(acceptedGroups.indexOf(groupID)==-1)
-            acceptedGroups.add(groupID);
+    public void acceptGroup(String groupID,String groupName){
+        if(pendingGroups.get(groupID)!=null)
+            pendingGroups.remove(groupID);
+        if(acceptedGroups.get(groupID)==null)
+            acceptedGroups.put(groupID,groupName);
     }
 
     @Exclude
     public void removeSelfFromGroup(String groupID){
-        if(acceptedGroups.indexOf(groupID)!=-1)
-            acceptedGroups.remove(acceptedGroups.indexOf(groupID));
+        if(acceptedGroups.get(groupID)!=null)
+            acceptedGroups.remove(groupID);
     }
 
     @Exclude

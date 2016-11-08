@@ -11,73 +11,68 @@ import java.util.Map;
  */
 public class Group {
 
-    private String groupID;
-    private ArrayList<String> members;
-    private ArrayList<String> events;
+    private String groupName;
+    private HashMap<String,String> members;
+    private HashMap<String,String> events;
 
     public Group(){
     }
 
     public Group(String str){
-        groupID = str;
+        groupName = str;
     }
 
-    public void addMember(String newperson){
-        if(members.indexOf(newperson)==-1)
-            members.add(newperson);
+    public void addMember(String newPersonID, String newperson){
+        if(members.get(newperson)==null)
+            members.put(newPersonID, newperson);
     }
 
-    public String getGroupID(){
-        return groupID;
+    public String getGroupName(){
+        return groupName;
     }
 
-    public ArrayList<String> getMembers(){
+    public HashMap<String,String> getMembers(){
         return members;
     }
 
-    public ArrayList<String> getEvents(){
+    public HashMap<String,String> getEvents(){
         return events;
     }
 
-    public void setGroupID(String group){
-        groupID=group;
+    public void setGroupName(String group){
+        groupName=group;
     }
 
-    public void setMembers(ArrayList<String> inList){
+    public void setMembers(HashMap<String,String> inList){
         members = inList;
     }
 
-    public void setEvents(ArrayList<String> inList){
+    public void setEvents(HashMap<String,String> inList){
         events = inList;
     }
 
     @Exclude
-    public void deleteMember(String newperson){
-        for(int i = 0; i < members.size(); i++){
-            if (members.get(i).equals(newperson))
-            {
-                members.remove(i);
-                break;
-            }
-        }
+    public void deleteMember(String personID){
+        if(members.get(personID)!=null)
+            members.remove(personID);
     }
 
     @Exclude
-    public void addEvent(String event){
-        if(events.indexOf(event)==-1)
-            events.add(event);
+    public void addEvent(String eventID, String eventName){
+        if(events.get(eventID) == null)
+            events.put(eventID,eventName);
     }
 
     @Exclude
     public void removeUser(String userID){
-        if(members.indexOf(userID)!=-1)
-            members.remove(members.indexOf(userID));
+        if(members.get(userID)!=null)
+            members.remove(userID);
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("groupID", groupID);
+        result.put("groupName", groupName);
         result.put("members", members);
         result.put("events", events);
 

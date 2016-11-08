@@ -84,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
     private GoogleAccountCredential mCredential;
     private String userName;
     private User currentUser;
+    private Group tempGrp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
 
                 alertDialogBuilderUserInput
                         .setCancelable(false)
-                        .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogBox, int id) {
                                 group_list.add(userInputDialogEditText.getText().toString());
                                 ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
@@ -212,6 +213,15 @@ public class MainActivity extends AppCompatActivity {
         mUsersReference = mDatabase.child("users").child(encodeEmailKey(userName));
         System.out.println(mUsersReference.toString());
 
+    }
+
+    public void addGroup(String groupName){
+        tempGrp = new Group(groupName);
+        tempGrp.addMember(encodeEmailKey(currentUser.getUserName()),currentUser.getUserName());
+        String groupID = mDatabase.child("groups").push().getKey();
+        currentUser.acceptGroup(groupID,groupName);
+        mUsersReference.setValue(currentUser);
+        mDatabase.child("groups").child(groupID).setValue(tempGrp);
     }
 
     @Override
@@ -477,6 +487,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String decodeEmailKey(String inString){
-        return inString.replaceAll("[%2E]",".");
+        return inString.replaceAll("[%2Ecom]",".com");
     }
 }
