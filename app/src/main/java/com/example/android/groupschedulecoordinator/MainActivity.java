@@ -56,12 +56,17 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -176,9 +181,55 @@ public class MainActivity extends AppCompatActivity {
         mUsersReference = mDatabase.child("users").child(encodeEmailKey(userName));
         System.out.println(mUsersReference.toString());
 
+        ValueEventListener dataListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    // Get CustomUser object and use the values to update the UI
+                    System.out.println("Data change for " + userName);
+                    System.out.println("Data: "+dataSnapshot.toString());
+                    User tempUser = dataSnapshot.getValue(User.class);
+                    if(tempUser.getPendingGroups()==null)
+                        tempUser.setPendingGroups(new HashMap<String, String>());
+                    if(tempUser.getAcceptedGroups()==null)
+                        tempUser.setAcceptedGroups(new HashMap<String, String>());
+                    if(tempUser.getFreeTimes()!=null)
+                        currentUser.setFreeTimes(tempUser.getFreeTimes());
+                    currentUser.setPendingGroups(tempUser.getPendingGroups());
+                    currentUser.setAcceptedGroups(tempUser.getAcceptedGroups());
+                }
+                else{
+                    System.out.println(dataSnapshot.toString()+"Does not exist");
+                    mUsersReference.setValue(currentUser);
+                }
+                updateGroupList();
+                userUpdate();
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadUser:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+
+        mUsersReference.addValueEventListener(dataListener);
+        mListener = dataListener;
+        System.out.println("Added listener");
+
     }
 
-    public void addGroup(String groupName){
+    private void userUpdate(){
+        MakeRequestTask makeRequestTask = new MakeRequestTask(mCredential);
+        try {
+            makeRequestTask.execute();
+        }
+        catch(Exception e){
+            Log.e("GetDataFromAPI",e.toString());
+        }
+    }
+
+    private void addGroup(String groupName){
         tempGrp = new Group(groupName);
         tempGrp.addMember(encodeEmailKey(currentUser.getUserName()),currentUser.getUserName());
         String groupID = mDatabase.child("groups").push().getKey();
@@ -187,46 +238,9 @@ public class MainActivity extends AppCompatActivity {
         mDatabase.child("groups").child(groupID).setValue(tempGrp);
     }
 
-    @Override
-    protected void onStart(){
-        super.onStart();
-        ValueEventListener dataListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            if (dataSnapshot.exists()){
-                // Get CustomUser object and use the values to update the UI
-                System.out.println("Data change for " + userName);
-                System.out.println("Data: "+dataSnapshot.toString());
-                User tempUser = dataSnapshot.getValue(User.class);
-                if(tempUser.getFreeTimes()!=null)
-                    currentUser.setFreeTimes(tempUser.getFreeTimes());
-                if(tempUser.getPendingGroups()!=null)
-                    currentUser.setPendingGroups(tempUser.getPendingGroups());
-                if(tempUser.getAcceptedGroups()!=null)
-                    currentUser.setAcceptedGroups(tempUser.getAcceptedGroups());
-                updateGroupList();
-            }
-            else{
-                System.out.println(dataSnapshot.toString()+"Does not exist");
-                mUsersReference.setValue(currentUser);
-                updateGroupList();
-            }
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            // Getting Post failed, log a message
-            Log.w(TAG, "loadUser:onCancelled", databaseError.toException());
-            // ...
-        }
-    };
-        mUsersReference.addValueEventListener(dataListener);
-        mListener = dataListener;
-        userUpdate();
-        System.out.println("Added listener");
-    }
+    private void updateGroupList(){
 
-    public void updateGroupList(){
-
+        System.out.println("Entered updateGroupList");
         grouplv = (ListView) findViewById(R.id.groupList);
 
         group_list = new ArrayList<String>();
@@ -234,8 +248,14 @@ public class MainActivity extends AppCompatActivity {
 
         HashMap<String,String> acceptedMap = currentUser.getAcceptedGroups();
         Set<String> keySet = acceptedMap.keySet();
+        ArrayList<String> sortedKeys = new ArrayList<String>();
+        for(String i:keySet){
+            sortedKeys.add(i);
+        }
+        Collections.sort(sortedKeys);
+        System.out.println(sortedKeys);
 
-        for(String s: keySet){
+        for(String s: sortedKeys){
             groupID_list.add(s);
             group_list.add(acceptedMap.get(s));
         }
@@ -261,19 +281,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop(){
-        super.onStop();
+    protected void onDestroy(){
+        super.onDestroy();
         mUsersReference.removeEventListener(mListener);
-    }
-
-    private void userUpdate(){
-        MakeRequestTask makeRequestTask = new MakeRequestTask(mCredential);
-        try {
-            makeRequestTask.execute();
-        }
-        catch(Exception e){
-            Log.e("GetDataFromAPI",e.toString());
-        }
     }
 
     @Override
