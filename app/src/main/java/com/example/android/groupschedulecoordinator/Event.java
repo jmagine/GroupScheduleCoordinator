@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public class Event {
 
-    private String eventID;
+    private String eventName;
     private String hostID;
     private int start;
     private int end;
@@ -24,7 +24,7 @@ public class Event {
     public Event(String name, ArrayList<String> pendingU) {
         pendingUsers = new ArrayList<String>(pendingU);
         completedUsers = new ArrayList<String>();
-        this.eventID = name;
+        this.eventName = name;
         this.start = 0;
         this.end = 0;
         isReady = false;
@@ -33,7 +33,7 @@ public class Event {
     public String getHostID() { return hostID; }
 
     public String getEventID(){
-        return eventID;
+        return eventName;
     }
 
     public int getStart(){
@@ -90,7 +90,7 @@ public class Event {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("name", eventID);
+        result.put("name", eventName);
         result.put("start", start);
         result.put("end", end);
         result.put("isReady", isReady);
