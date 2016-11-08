@@ -10,9 +10,11 @@ import java.util.Map;
  */
 public class Event {
 
-    private String eventName;
+    private String eventID;
+    private String hostID;
     private int start;
     private int end;
+    private boolean isReady;
     private ArrayList<String> pendingUsers;
     private ArrayList<String> completedUsers;
 
@@ -22,13 +24,16 @@ public class Event {
     public Event(String name, ArrayList<String> pendingU) {
         pendingUsers = new ArrayList<String>(pendingU);
         completedUsers = new ArrayList<String>();
-        this.eventName = name;
+        this.eventID = name;
         this.start = 0;
         this.end = 0;
+        isReady = false;
     }
 
-    public String getEventName(){
-        return eventName;
+    public String getHostID() { return hostID; }
+
+    public String getEventID(){
+        return eventID;
     }
 
     public int getStart(){
@@ -39,6 +44,10 @@ public class Event {
         return end;
     }
 
+    public boolean getReady(){
+        return isReady;
+    }
+
     public ArrayList<String> getPendingUsers(){
         return pendingUsers;
     }
@@ -47,12 +56,18 @@ public class Event {
         return completedUsers;
     }
 
+    public void setHostID(String id) { hostID = id; }
+
     public void setStart(int start1){
         start = start1;
     }
 
     public void setEnd(int end1){
         end = end1;
+    }
+
+    public void setReady(boolean id){
+        isReady = id;
     }
 
     public void setPendingUsers(ArrayList<String> in){
@@ -69,15 +84,16 @@ public class Event {
             pendingUsers.remove(pendingUsers.indexOf(user));
         if(completedUsers.indexOf(user)==-1)
             completedUsers.add(user);
-        return pendingUsers.isEmpty();
+        return isReady;
     }
 
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("name", eventName);
+        result.put("name", eventID);
         result.put("start", start);
         result.put("end", end);
+        result.put("isReady", isReady);
         result.put("pendingUsers", pendingUsers);
         result.put("completedUsers", completedUsers);
 
