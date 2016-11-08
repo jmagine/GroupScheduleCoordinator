@@ -20,6 +20,8 @@ public class Group {
 
     public Group(String str){
         groupName = str;
+        members = new HashMap<String,String>();
+        events = new HashMap<String,String>();
     }
 
     public void addMember(String newPersonID, String newperson){

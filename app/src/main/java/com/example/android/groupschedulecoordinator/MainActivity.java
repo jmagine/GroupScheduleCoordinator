@@ -61,12 +61,14 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 public class MainActivity extends AppCompatActivity {
     Button btn;
     ListView grouplv;
     ArrayList<String> group_list;
+    ArrayList<String> groupID_list;
     final Context c = this;
     private static final String TAG = "MainActivity";
     private static final String PREF_ACCOUNT_NAME = "accountName";
@@ -91,31 +93,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        grouplv = (ListView) findViewById(R.id.groupList);
-
-          group_list = new ArrayList<String>();
-          group_list.add("Test Group");
-  //        group_list.add("bar");
-
-        final Bundle extras = getIntent().getExtras();
-        if(extras != null)
-        {
-//            String groupName = extras.getString("groupName");
-//            if(groupName != null) {
-//                group_list.add(groupName);
-//            }
-            group_list = extras.getStringArrayList("groupList");
-        }
-
-        if(group_list != null) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
-                    this,
-                    android.R.layout.simple_list_item_1,
-                    group_list);
-
-            grouplv.setAdapter(arrayAdapter);
-        }
-
         mAuth = FirebaseAuth.getInstance();
         logout = (Button) findViewById(R.id.button2);
         logout.setOnClickListener(new View.OnClickListener() {
@@ -125,21 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, LoginScreen.class));
             }
         });
-
-
-
-        grouplv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                String groupName = (String) grouplv.getItemAtPosition(position);
-                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
-                intent.putExtra("groupName", groupName);
-                startActivity(intent);
-            }
-        });
-
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.myFab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                                         group_list);
 
                                 grouplv.setAdapter(arrayAdapter);
+                                addGroup(userInputDialogEditText.getText().toString());
                             }
                         })
 
@@ -212,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(mDatabase.toString());
         mUsersReference = mDatabase.child("users").child(encodeEmailKey(userName));
         System.out.println(mUsersReference.toString());
+        addGroup("TEST GROUP"); //TESTING ADDGROUP
 
     }
 
@@ -236,6 +200,9 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Data: "+dataSnapshot.toString());
                 User tempUser = dataSnapshot.getValue(User.class);
                 currentUser.setFreeTimes(tempUser.getFreeTimes());
+                currentUser.setPendingGroups(tempUser.getPendingGroups());
+                currentUser.setAcceptedGroups(tempUser.getAcceptedGroups());
+                updateGroupList();
             }
             else{
                 System.out.println(dataSnapshot.toString()+"Does not exist");
@@ -249,10 +216,45 @@ public class MainActivity extends AppCompatActivity {
             // ...
         }
     };
-        mUsersReference.addListenerForSingleValueEvent(dataListener);
+        mUsersReference.addValueEventListener(dataListener);
         mListener = dataListener;
         userUpdate();
         System.out.println("Added listener");
+    }
+
+    public void updateGroupList(){
+
+        grouplv = (ListView) findViewById(R.id.groupList);
+
+        group_list = new ArrayList<String>();
+        groupID_list = new ArrayList<String>();
+
+        HashMap<String,String> acceptedMap = currentUser.getAcceptedGroups();
+        Set<String> keySet = acceptedMap.keySet();
+
+        for(String s: keySet){
+            groupID_list.add(s);
+            group_list.add(acceptedMap.get(s));
+        }
+
+        if(group_list != null) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    group_list);
+            grouplv.setAdapter(arrayAdapter);
+        }
+
+        grouplv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                String groupID = groupID_list.get(position);
+                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
+                intent.putExtra("groupID", groupID);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -483,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String encodeEmailKey(String inString){
-        return inString.replaceAll("[.]", "%2E");
+        return inString.replaceAll("[.com]", "%2Ecom");
     }
 
     public String decodeEmailKey(String inString){
