@@ -66,9 +66,11 @@ public class AddMemberToGroup extends AppCompatActivity {
             startActivity(intent);
         }
 
-
-
-
-
     }
+
+    public void cancelMember(View v)
+    {
+        onBackPressed();
+    }
+
 }
