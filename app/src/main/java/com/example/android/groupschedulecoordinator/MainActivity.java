@@ -175,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         System.out.println(mDatabase.toString());
         mUsersReference = mDatabase.child("users").child(encodeEmailKey(userName));
         System.out.println(mUsersReference.toString());
-        addGroup("TEST GROUP"); //TESTING ADDGROUP
 
     }
 
@@ -199,14 +198,18 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Data change for " + userName);
                 System.out.println("Data: "+dataSnapshot.toString());
                 User tempUser = dataSnapshot.getValue(User.class);
-                currentUser.setFreeTimes(tempUser.getFreeTimes());
-                currentUser.setPendingGroups(tempUser.getPendingGroups());
-                currentUser.setAcceptedGroups(tempUser.getAcceptedGroups());
+                if(tempUser.getFreeTimes()!=null)
+                    currentUser.setFreeTimes(tempUser.getFreeTimes());
+                if(tempUser.getPendingGroups()!=null)
+                    currentUser.setPendingGroups(tempUser.getPendingGroups());
+                if(tempUser.getAcceptedGroups()!=null)
+                    currentUser.setAcceptedGroups(tempUser.getAcceptedGroups());
                 updateGroupList();
             }
             else{
                 System.out.println(dataSnapshot.toString()+"Does not exist");
                 mUsersReference.setValue(currentUser);
+                updateGroupList();
             }
         }
         @Override
@@ -404,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
             if (output == null || output.size() == 0) {
                 //mOutputText.setText("No results returned.");
             } else {
-                System.out.println(mDatabase.getRoot().toString());
+                System.out.println(mDatabase.toString());
                 currentUser.setFreeTimes(output);
                 mUsersReference.setValue(currentUser);
                 //mOutputText.setText(TextUtils.join("\n", output));
@@ -485,7 +488,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String encodeEmailKey(String inString){
-        return inString.replaceAll("[.com]", "%2Ecom");
+        return inString.replaceAll("[.]com", "%2Ecom");
     }
 
     public String decodeEmailKey(String inString){

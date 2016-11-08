@@ -80,8 +80,8 @@ public class User implements Parcelable {
     /* flatten User into parcel */
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(userName);
-        out.writeList(pendingGroups);
-        out.writeList(acceptedGroups);
+        out.writeMap(pendingGroups);
+        out.writeMap(acceptedGroups);
         out.writeMap(freeTimes);
     }
 
@@ -98,8 +98,8 @@ public class User implements Parcelable {
 
     private User(Parcel in) {
         userName = in.readString();
-        in.readList(pendingGroups, null); //?????
-        in.readList(acceptedGroups, null); //???
+        in.readMap(pendingGroups, null); //?????
+        in.readMap(acceptedGroups, null); //???
         in.readMap(freeTimes, null); //????
     }
 
