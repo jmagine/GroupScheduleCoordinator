@@ -498,16 +498,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String encodeEmailKey(String inString){
-        int lastIndex = inString.lastIndexOf('.');
-        if(lastIndex != -1)
-            return inString.substring(0,lastIndex) + "%2E" + inString.substring(lastIndex+1);
-        return inString;
+        return inString.replace('.',(char)0xA4);
     }
 
     public String decodeEmailKey(String inString){
-        int lastIndex = inString.lastIndexOf("%2E");
-        if(lastIndex != -1)
-            return inString.substring(0,lastIndex) + "." + inString.substring(lastIndex+3);
-        return inString;
+        return inString.replace((char)0xA4,'.');
     }
 }
