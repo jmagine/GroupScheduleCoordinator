@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
                 alertDialogBuilderUserInput.setView(mView);
 
                 final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.userInputDialog);
-
                 alertDialogBuilderUserInput
                         .setCancelable(false)
                         .setPositiveButton("Create", new DialogInterface.OnClickListener() {
@@ -164,6 +163,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
 
                 AlertDialog alertDialogAndroid = alertDialogBuilderUserInput.create();
+                alertDialogAndroid.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
                 alertDialogAndroid.show();
 
 //                Intent intent = new Intent(MainActivity.this, ActivityCreateGroup.class);
