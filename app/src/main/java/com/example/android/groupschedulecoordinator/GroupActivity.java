@@ -33,8 +33,10 @@ import java.util.List;
 
 public class GroupActivity extends AppCompatActivity {
 
-    ListView lv;
+    ListView lvMem;
+    ListView lvEvent;
     ArrayList<String> group_list;
+    ArrayList<String> event_list;
     final Context c = this;
     WeekView mWeekView;
     WeekView.EventClickListener mEventClickListener;
@@ -70,8 +72,11 @@ public class GroupActivity extends AppCompatActivity {
 
 
 
-        lv = (ListView) findViewById(R.id.lvMembers);
+        lvMem = (ListView) findViewById(R.id.lvMembers);
         group_list = new ArrayList<String>();
+
+        lvEvent = (ListView) findViewById(R.id.lvMeetings);
+        event_list = new ArrayList<String>();
 
         final Bundle bundle1 = getIntent().getExtras();
         if(bundle1 != null)
@@ -81,18 +86,33 @@ public class GroupActivity extends AppCompatActivity {
 //                group_list.add(groupName);
 //            }
             group_list = bundle1.getStringArrayList("groupList");
+            event_list = bundle1.getStringArrayList("eventList");
         }
 
         if(group_list != null) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+            ArrayAdapter<String> arrayAdapterMember = new ArrayAdapter<String>(
                     this,
                     android.R.layout.simple_list_item_1,
                     group_list);
 
-            if( lv != null ) {
-                lv.setAdapter(arrayAdapter);
+            if( lvMem != null ) {
+                lvMem.setAdapter(arrayAdapterMember);
             }
         }
+
+        if(event_list != null) {
+            ArrayAdapter<String> arrayAdapterEvent = new ArrayAdapter<String>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    event_list);
+
+            if(lvEvent != null) {
+                lvEvent.setAdapter(arrayAdapterEvent);
+            }
+        }
+
+
+
 
 
 
@@ -170,7 +190,7 @@ public class GroupActivity extends AppCompatActivity {
                                         android.R.layout.simple_list_item_1,
                                         group_list);
 
-                                lv.setAdapter(arrayAdapter);
+                                lvMem.setAdapter(arrayAdapter);
                             }
                         })
 
@@ -195,8 +215,36 @@ public class GroupActivity extends AppCompatActivity {
         Button fab1 = (Button) findViewById(R.id.btnNewMeeting);
         fab1.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
 
+                LayoutInflater layoutInflaterAndroid = LayoutInflater.from(c);
+                View mView = layoutInflaterAndroid.inflate(R.layout.dialog_popup, null);
+                AlertDialog.Builder alertDialogBuilderUserInput = new AlertDialog.Builder(c);
+                alertDialogBuilderUserInput.setView(mView);
+
+                final EditText userInputDialogEditText = (EditText) mView.findViewById(R.id.enterEmail);
+
+                alertDialogBuilderUserInput
+                      .setCancelable(false)
+                      .setPositiveButton("Send", new DialogInterface.OnClickListener() {
+                          public void onClick(DialogInterface dialogBox, int id) {
+                              event_list.add(userInputDialogEditText.getText().toString());
+                              ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                                    c,
+                                    android.R.layout.simple_list_item_1,
+                                    event_list);
+
+                              lvEvent.setAdapter(arrayAdapter);
+                          }
+                      })
+
+                      .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialogBox, int id) {
+                                    //dialogBox.cancel();
+                                }
+                            });
+                Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
+                intent.putStringArrayListExtra("eventList", event_list);
                 startActivity(intent);
             }
 

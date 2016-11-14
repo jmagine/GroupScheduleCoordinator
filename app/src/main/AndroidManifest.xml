@@ -30,6 +30,9 @@
           android:name=".AddMemberToGroup"
           android:parentActivityName=".GroupActivity" />
         <activity
+          android:name=".ActivityCreateMeeting"
+          android:parentActivityName=".GroupActivity" />
+        <activity
             android:name=".GroupActivity"
             android:label="@string/title_activity_group"
             android:parentActivityName=".MainActivity"
@@ -50,7 +53,6 @@
             android:name="android.support.PARENT_ACTIVITY"
             android:value="com.example.android.groupschedulecoordinator.MainActivity" />
 
-        <activity android:name=".ActivityCreateMeeting"></activity>
     </application>
 
 </manifest>

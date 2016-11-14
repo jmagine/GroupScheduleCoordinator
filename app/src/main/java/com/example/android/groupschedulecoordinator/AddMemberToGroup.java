@@ -29,22 +29,11 @@ public class AddMemberToGroup extends AppCompatActivity {
 
         if(memberName.isEmpty())
         {
-
-            android.content.Context context = getApplicationContext();
-            CharSequence warning = "Please enter a valid name.";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, warning, duration);
-            toast.show();
+            displayFuckingWarning("Please enter a valid name.");
         }
         else if(memberEmail.isEmpty())
         {
-            android.content.Context context = getApplicationContext();
-            CharSequence warning = "Please enter a valid email.";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, warning, duration);
-            toast.show();
+            displayFuckingWarning("Please enter a valid email.");
         }
         else
         {
@@ -68,6 +57,15 @@ public class AddMemberToGroup extends AppCompatActivity {
             startActivity(intent);
         }
 
+    }
+
+    public void displayFuckingWarning(String str) {
+        android.content.Context context = getApplicationContext();
+        CharSequence warning = str;
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, warning, duration);
+        toast.show();
     }
 
     @Override

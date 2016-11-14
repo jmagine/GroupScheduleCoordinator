@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +19,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class ActivityCreateMeeting extends AppCompatActivity {
 
@@ -82,6 +86,72 @@ public class ActivityCreateMeeting extends AppCompatActivity {
 
     }
 
+    public void addMeeting(View v) {
+        String meetingStr = "";
+        EditText eventName = (EditText) findViewById(R.id.eventName);
+        Spinner hourLength =  (Spinner) findViewById(R.id.spinnerLengthHour);
+        Spinner minutesLength = (Spinner) findViewById(R.id.spinnerLengthMinute);
+
+        Spinner beginHour =  (Spinner) findViewById(R.id.spinnerBeginHour);
+        Spinner beginMin = (Spinner) findViewById(R.id.spinnerBeginMinute);
+        Spinner beginTime = (Spinner) findViewById(R.id.spinnerBeginToD);
+
+        String eventNameStr = eventName.getText().toString();
+        String hourLenStr = hourLength.getSelectedItem().toString();
+        String minLenStr = minutesLength.getSelectedItem().toString();
+        String beginHourStr = beginHour.getSelectedItem().toString();
+        String beginMinStr = beginMin.getSelectedItem().toString();
+        String beginTimeStr = beginTime.getSelectedItem().toString();
+
+        if(Integer.parseInt(beginHourStr) < 10)
+            beginHourStr = "0" + beginHourStr;
+        if(Integer.parseInt(beginMinStr) < 10)
+            beginMinStr += "0";
+
+        meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
+        if(eventNameStr.isEmpty()) {
+            displayFuckingWarning("Please enter a valid event name");
+        }
+        else if(hourLenStr.isEmpty() || minLenStr.isEmpty())
+        {
+            displayFuckingWarning("Please enter a valid length.");
+        }
+        else if(beginHourStr.isEmpty() || beginMinStr.isEmpty())
+        {
+            displayFuckingWarning("Please enter a valid begin time.");
+        }
+        else
+        {
+            Intent intent = new Intent(ActivityCreateMeeting.this, GroupActivity.class);
+
+            Bundle extras = getIntent().getExtras();
+            ArrayList<String> event_list = new ArrayList<>();
+            if( extras != null ) {
+                event_list = extras.getStringArrayList("eventList");
+            }
+
+            if(event_list == null)
+            {
+                event_list = new ArrayList<>();
+            }
+            event_list.add(meetingStr);
+
+            //intent.putExtra("memberName", memberName);
+            intent.putStringArrayListExtra("eventList", event_list);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+
+    }
+
+    public void displayFuckingWarning(String str) {
+        android.content.Context context = getApplicationContext();
+        CharSequence warning = str;
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, warning, duration);
+        toast.show();
+    }
 
 //    public void pickTimeStart(View v)
 //    {
