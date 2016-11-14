@@ -35,19 +35,17 @@
         android:layout_weight="2"/>
 
 
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
         <TextView
             android:text="Length of Meeting"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:id="@+id/tvLength" />
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingTop="10dp"
+      android:paddingBottom="10dp">
 
         <Spinner
             android:layout_width="wrap_content"
@@ -74,21 +72,26 @@
 
 
 
-    <LinearLayout
+    <TextView
+        android:text="Earliest Meeting Time"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
-        <TextView
-            android:text="Earliest Meeting Time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvStartTime" />
+        android:layout_height="wrap_content"
+        android:id="@+id/tvStartTime" />
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:orientation="horizontal"
+      android:paddingTop="10dp"
+      android:paddingBottom="10dp">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/spinnerBeginHour" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"/>
 
         <Spinner
             android:layout_width="wrap_content"
@@ -102,21 +105,27 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <TextView
+        android:text="Latest Meeting Time"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp">
-        <TextView
-            android:text="Latest Meeting Time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tvEndTime" />
+        android:layout_height="wrap_content"
+        android:id="@+id/tvEndTime" />
+
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:orientation="horizontal"
+      android:paddingTop="10dp"
+      android:paddingBottom="10dp">
         <Spinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/spinnerEndHour" />
+        <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text=":"/>
 
         <Spinner
             android:layout_width="wrap_content"
