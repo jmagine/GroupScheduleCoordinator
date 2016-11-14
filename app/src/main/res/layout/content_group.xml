@@ -67,7 +67,8 @@
                         android:layout_height="wrap_content"
                         android:text = "Add New Meeting"
                         android:layout_gravity="center"
-                        android:paddingTop="@dimen/activity_vertical_margin"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="8dp"
                         android:layout_marginBottom="@dimen/activity_vertical_margin"
                         android:id = "@+id/btnNewMeeting"
                         />
