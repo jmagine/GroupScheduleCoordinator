@@ -59,11 +59,21 @@ public class Event {
     public void setHostID(String id) { hostID = id; }
 
     public void setStart(int start1){
-        start = start1;
+        if (start1 >= 0) {
+            start = start1;
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void setEnd(int end1){
-        end = end1;
+        if (end1 >= 0) {
+            end = end1;
+        }
+        else {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void setReady(boolean id){
