@@ -329,10 +329,14 @@ public class GroupActivity extends AppCompatActivity {
         eventID_list = new ArrayList<String>();
         HashMap<String,Event> eventMap;
 
-        if(currentGroup.getEvents() != null)
+        if(currentGroup.getEvents() != null) {
             eventMap = currentGroup.getEvents();
-        else
+            System.out.println("EventMap: " + eventMap);
+        }
+        else {
+            System.out.println("currentGroup no events");
             eventMap = new HashMap<>();
+        }
         Set<String> keySet = eventMap.keySet();
         ArrayList<String> sortedKeys = new ArrayList<String>();
         for(String i:keySet){
@@ -341,13 +345,18 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedKeys);
         System.out.println(sortedKeys);
 
-        if(currEvents == null)
+        if(currEvents == null) {
+            System.out.println("currEvents is null");
             currEvents = new HashMap<>();
+        }
+
         for(String s: sortedKeys){
             eventID_list.add(s);
             event_list.add(eventMap.get(s).getEventName());
             currEvents.put(s, eventMap.get(s));
         }
+
+        System.out.println("CurrEvents: " + currEvents);
 
         if(event_list != null) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
@@ -356,6 +365,8 @@ public class GroupActivity extends AppCompatActivity {
                   event_list);
             lvEvent.setAdapter(arrayAdapter);
         }
+
+        mGroupsReference.child("events").setValue(currEvents);
 
         /*
         lvEvent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -384,13 +395,15 @@ public class GroupActivity extends AppCompatActivity {
         //mDatabase.child("groups").child(groupID).child(eventID).setValue(tempEvent);
 
         //update group's events
-        if(currEvents == null)
+        if(currEvents == null) {
+            System.out.println("Instantiated currEvents - addEvent");
             currEvents = new HashMap<>();
+        }
         currEvents.put(eventName, tempEvent);
+        //updateEventList();
         //currentGroup.setEvents(currEvents);
 
         //push group events changes to firebase
-        mGroupsReference.child("events").setValue(currEvents);
     }
 
     protected String getEventTitle(Calendar time) {
