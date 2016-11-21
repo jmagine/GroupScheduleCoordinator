@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 String groupID = groupID_list.get(position);
                 Intent intent = new Intent(MainActivity.this, GroupActivity.class);
                 intent.putExtra("groupID", groupID);
+                intent.putExtra("calling", "main");
                 startActivity(intent);
             }
         });

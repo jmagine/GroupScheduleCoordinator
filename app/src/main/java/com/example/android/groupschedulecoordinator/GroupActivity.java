@@ -13,10 +13,12 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,21 +28,36 @@ import android.widget.TextView;
 
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
+import com.google.api.client.util.Data;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class GroupActivity extends AppCompatActivity {
 
-    ListView lvMem;
-    ListView lvEvent;
-    ArrayList<String> group_list;
-    ArrayList<String> event_list;
-    final Context c = this;
-    WeekView mWeekView;
-    WeekView.EventClickListener mEventClickListener;
-    WeekView.EventLongPressListener mEventLongPressListener;
+    private ListView lvMem;
+    private ListView lvEvent;
+    private ArrayList<String> group_list;
+    private ArrayList<String> event_list;
+    private ArrayList<String> eventID_list;
+    private final Context c = this;
+    private WeekView mWeekView;
+    private WeekView.EventClickListener mEventClickListener;
+    private WeekView.EventLongPressListener mEventLongPressListener;
+    private DatabaseReference mDatabase;
+    private DatabaseReference mGroupsReference;
+    private Group currentGroup;
+    private String groupID;
+    private ValueEventListener mListener;
 
 
     WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
@@ -70,24 +87,42 @@ public class GroupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_group);
 
-
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        System.out.println("GroupActivity Database Reference: " + mDatabase.toString());
 
         lvMem = (ListView) findViewById(R.id.lvMembers);
         group_list = new ArrayList<String>();
 
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
         event_list = new ArrayList<String>();
+        eventID_list = new ArrayList<String>();
 
         final Bundle bundle1 = getIntent().getExtras();
         if(bundle1 != null)
         {
-//            String groupName = extras.getString("groupName");
-//            if(groupName != null) {
-//                group_list.add(groupName);
-//            }
+            groupID = bundle1.getString("groupID");
+            Log.d("jlogs", "groupID: " + groupID);
+            if(groupID == null) {
+                groupID = "null";
+                Log.d("jlogs", "null groupID");
+            }
+
+            currentGroup = new Group();
+
+            mGroupsReference = mDatabase.child("groups").child(groupID);
+            System.out.println("GroupActivity Database Group Reference: " + mGroupsReference.toString());
             group_list = bundle1.getStringArrayList("groupList");
             event_list = bundle1.getStringArrayList("eventList");
+
+            String calling = bundle1.getString("calling");
+            if(calling.equals("createMeeting")) {
+                String name = bundle1.getString("eventName");
+
+                addEvent(name, 1, 2);
+            }
         }
+        else
+            Log.d("jlogs", "bundle is null");
 
         if(group_list != null) {
             ArrayAdapter<String> arrayAdapterMember = new ArrayAdapter<String>(
@@ -205,7 +240,6 @@ public class GroupActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(GroupActivity.this, AddMemberToGroup.class);
                 intent.putStringArrayListExtra("groupList", group_list);
-
                 startActivity(intent);
                 //startActivity(new Intent(GroupActivity.this, ActivityCreateGroup.class));
             }
@@ -234,6 +268,7 @@ public class GroupActivity extends AppCompatActivity {
                                     event_list);
 
                               lvEvent.setAdapter(arrayAdapter);
+                              //addEvent(userInputDialogEditText.getText().toString(), 1, 2);
                           }
                       })
 
@@ -245,13 +280,131 @@ public class GroupActivity extends AppCompatActivity {
                             });
                 Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
                 intent.putStringArrayListExtra("eventList", event_list);
+                intent.putExtra("groupID", groupID);
                 startActivity(intent);
             }
 
         });
+
+        ValueEventListener dataListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()){
+                    // Get CustomUser object and use the values to update the UI
+                    //System.out.println("Data change for " + userName);
+                    System.out.println("Data: "+dataSnapshot.toString());
+                    Group tempGroup = dataSnapshot.getValue(Group.class);
+
+                    if(tempGroup.getEvents() == null)
+                        tempGroup.setEvents(new HashMap<String, String>());
+                    if(tempGroup.getMembers() == null)
+                        tempGroup.setMembers(new HashMap<String, String>());
+                    if(tempGroup.getGroupName() == null)
+                        tempGroup.setGroupName("");
+                    currentGroup.setEvents(tempGroup.getEvents());
+                    currentGroup.setMembers(tempGroup.getMembers());
+                    currentGroup.setGroupName(tempGroup.getGroupName());
+                    updateEventList();
+                }
+                else{
+                    System.out.println(dataSnapshot.toString()+"Does not exist");
+                    //mUsersReference.setValue(currentUser);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w("jasonlogs", "loadUser:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+
+        mGroupsReference.addValueEventListener(dataListener);
+        mListener = dataListener;
+        //mListener = dataListener;
+        System.out.println("Added listener");
         
     }
+
+    private void updateEventList(){
+
+        System.out.println("Entered updateEventList");
+        lvEvent = (ListView) findViewById(R.id.lvMeetings);
+
+        event_list = new ArrayList<String>();
+        eventID_list = new ArrayList<String>();
+        HashMap<String,String> eventMap;
+
+        if(currentGroup.getEvents() != null)
+            eventMap = currentGroup.getEvents();
+        else
+            eventMap = new HashMap<>();
+        Set<String> keySet = eventMap.keySet();
+        ArrayList<String> sortedKeys = new ArrayList<String>();
+        for(String i:keySet){
+            sortedKeys.add(i);
+        }
+        Collections.sort(sortedKeys);
+        System.out.println(sortedKeys);
+
+        for(String s: sortedKeys){
+            eventID_list.add(s);
+            event_list.add(eventMap.get(s));
+        }
+
+        if(event_list != null) {
+            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                  this,
+                  android.R.layout.simple_list_item_1,
+                  event_list);
+            lvEvent.setAdapter(arrayAdapter);
+        }
+
+        /*
+        lvEvent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                String groupID = groupID_list.get(position);
+                Intent intent = new Intent(MainActivity.this, GroupActivity.class);
+                intent.putExtra("groupID", groupID);
+                startActivity(intent);
+            }
+        });
+        */
+    }
+
+    private void addEvent(String eventName, int start, int duration){
+        System.out.println("Entered addEvent");
+
+        Event tempEvent = new Event();
+        tempEvent.setEventName(eventName);
+        tempEvent.setStart(start);
+        tempEvent.setEnd(start + duration);
+
+        //String eventID = mDatabase.child("groups").child(groupID).push().getKey();
+        //mDatabase.child("groups").child(groupID).child(eventID).setValue(tempEvent);
+
+        //update group's events
+        HashMap<String, String> currEvents;
+        if(currentGroup.getEvents() != null)
+            currEvents = currentGroup.getEvents();
+        else
+            currEvents = new HashMap<String, String>();
+        currEvents.put(eventName, eventName);
+        currentGroup.setEvents(currEvents);
+
+        //push group events changes to firebase
+        mGroupsReference.setValue(currentGroup);
+    }
+
     protected String getEventTitle(Calendar time) {
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mGroupsReference.removeEventListener(mListener);
     }
 }

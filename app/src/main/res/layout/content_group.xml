@@ -60,7 +60,6 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-
                     <!--Need to add actual activities for adding new meeting-->
                     <Button
                         android:layout_width="wrap_content"

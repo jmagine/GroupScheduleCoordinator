@@ -30,6 +30,8 @@ public class Event {
         isReady = false;
     }
 
+    public String getEventName() { return eventName; }
+
     public String getHostID() { return hostID; }
 
     public String getEventID(){
@@ -55,6 +57,8 @@ public class Event {
     public ArrayList<String> getCompletedUsers(){
         return completedUsers;
     }
+
+    public void setEventName(String name) {eventName = name;}
 
     public void setHostID(String id) { hostID = id; }
 

@@ -103,6 +103,8 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         String beginMinStr = beginMin.getSelectedItem().toString();
         String beginTimeStr = beginTime.getSelectedItem().toString();
 
+        String groupID;
+
         if(Integer.parseInt(beginHourStr) < 10)
             beginHourStr = "0" + beginHourStr;
         if(Integer.parseInt(beginMinStr) < 10)
@@ -128,7 +130,14 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             ArrayList<String> event_list = new ArrayList<>();
             if( extras != null ) {
                 event_list = extras.getStringArrayList("eventList");
+
+                groupID = extras.getString("groupID");
             }
+            else
+                groupID = "";
+
+            System.out.println("Create Meeting groupID:" + extras.getString("groupID"));
+
 
             if(event_list == null)
             {
@@ -138,6 +147,11 @@ public class ActivityCreateMeeting extends AppCompatActivity {
 
             //intent.putExtra("memberName", memberName);
             intent.putStringArrayListExtra("eventList", event_list);
+            intent.putExtra("eventName", eventNameStr);
+            intent.putExtra("eventStart", beginHourStr);
+            intent.putExtra("eventDuration", hourLenStr);
+            intent.putExtra("groupID", groupID);
+            intent.putExtra("calling", "createMeeting");
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
         }
