@@ -49,6 +49,7 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<String> group_list;
     private ArrayList<String> event_list;
     private ArrayList<String> eventID_list;
+    private HashMap<String, Event> currEvents;
     private final Context c = this;
     private WeekView mWeekView;
     private WeekView.EventClickListener mEventClickListener;
@@ -58,6 +59,7 @@ public class GroupActivity extends AppCompatActivity {
     private Group currentGroup;
     private String groupID;
     private ValueEventListener mListener;
+    private String calling;
 
 
     WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
@@ -114,12 +116,8 @@ public class GroupActivity extends AppCompatActivity {
             group_list = bundle1.getStringArrayList("groupList");
             event_list = bundle1.getStringArrayList("eventList");
 
-            String calling = bundle1.getString("calling");
-            if(calling.equals("createMeeting")) {
-                String name = bundle1.getString("eventName");
+            calling = bundle1.getString("calling");
 
-                addEvent(name, 1, 2);
-            }
         }
         else
             Log.d("jlogs", "bundle is null");
@@ -145,16 +143,6 @@ public class GroupActivity extends AppCompatActivity {
                 lvEvent.setAdapter(arrayAdapterEvent);
             }
         }
-
-
-
-
-
-
-
-
-
-
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -289,6 +277,7 @@ public class GroupActivity extends AppCompatActivity {
         ValueEventListener dataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("onDataChange");
                 if (dataSnapshot.exists()){
                     // Get CustomUser object and use the values to update the UI
                     //System.out.println("Data change for " + userName);
@@ -296,7 +285,7 @@ public class GroupActivity extends AppCompatActivity {
                     Group tempGroup = dataSnapshot.getValue(Group.class);
 
                     if(tempGroup.getEvents() == null)
-                        tempGroup.setEvents(new HashMap<String, String>());
+                        tempGroup.setEvents(new HashMap<String, Event>());
                     if(tempGroup.getMembers() == null)
                         tempGroup.setMembers(new HashMap<String, String>());
                     if(tempGroup.getGroupName() == null)
@@ -308,7 +297,6 @@ public class GroupActivity extends AppCompatActivity {
                 }
                 else{
                     System.out.println(dataSnapshot.toString()+"Does not exist");
-                    //mUsersReference.setValue(currentUser);
                 }
             }
             @Override
@@ -322,7 +310,13 @@ public class GroupActivity extends AppCompatActivity {
         mGroupsReference.addValueEventListener(dataListener);
         mListener = dataListener;
         //mListener = dataListener;
-        System.out.println("Added listener");
+
+        System.out.println("Calling: " + calling);
+        if(calling.equals("createMeeting")) {
+            String name = bundle1.getString("eventName");
+
+            addEvent(name, 1, 2);
+        }
         
     }
 
@@ -333,7 +327,7 @@ public class GroupActivity extends AppCompatActivity {
 
         event_list = new ArrayList<String>();
         eventID_list = new ArrayList<String>();
-        HashMap<String,String> eventMap;
+        HashMap<String,Event> eventMap;
 
         if(currentGroup.getEvents() != null)
             eventMap = currentGroup.getEvents();
@@ -347,9 +341,12 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedKeys);
         System.out.println(sortedKeys);
 
+        if(currEvents == null)
+            currEvents = new HashMap<>();
         for(String s: sortedKeys){
             eventID_list.add(s);
-            event_list.add(eventMap.get(s));
+            event_list.add(eventMap.get(s).getEventName());
+            currEvents.put(s, eventMap.get(s));
         }
 
         if(event_list != null) {
@@ -375,8 +372,9 @@ public class GroupActivity extends AppCompatActivity {
     }
 
     private void addEvent(String eventName, int start, int duration){
-        System.out.println("Entered addEvent");
-
+        System.out.println("Entered addEvent: " + eventName + " " + start + " " + duration);
+        System.out.println("EventList: " + event_list);
+        System.out.println("currentGroup: " + currentGroup.toString());
         Event tempEvent = new Event();
         tempEvent.setEventName(eventName);
         tempEvent.setStart(start);
@@ -386,16 +384,13 @@ public class GroupActivity extends AppCompatActivity {
         //mDatabase.child("groups").child(groupID).child(eventID).setValue(tempEvent);
 
         //update group's events
-        HashMap<String, String> currEvents;
-        if(currentGroup.getEvents() != null)
-            currEvents = currentGroup.getEvents();
-        else
-            currEvents = new HashMap<String, String>();
-        currEvents.put(eventName, eventName);
-        currentGroup.setEvents(currEvents);
+        if(currEvents == null)
+            currEvents = new HashMap<>();
+        currEvents.put(eventName, tempEvent);
+        //currentGroup.setEvents(currEvents);
 
         //push group events changes to firebase
-        mGroupsReference.setValue(currentGroup);
+        mGroupsReference.child("events").setValue(currEvents);
     }
 
     protected String getEventTitle(Calendar time) {

@@ -13,7 +13,7 @@ public class Group {
 
     private String groupName;
     private HashMap<String,String> members;
-    private HashMap<String,String> events;
+    private HashMap<String,Event> events;
 
     public Group(){
     }
@@ -21,7 +21,7 @@ public class Group {
     public Group(String str){
         groupName = str;
         members = new HashMap<String,String>();
-        events = new HashMap<String,String>();
+        events = new HashMap<String,Event>();
     }
 
     public void addMember(String newPersonID, String newperson){
@@ -37,7 +37,7 @@ public class Group {
         return members;
     }
 
-    public HashMap<String,String> getEvents(){
+    public HashMap<String,Event> getEvents(){
         return events;
     }
 
@@ -49,7 +49,7 @@ public class Group {
         members = inList;
     }
 
-    public void setEvents(HashMap<String,String> inList){
+    public void setEvents(HashMap<String,Event> inList){
         events = inList;
     }
 
@@ -61,8 +61,11 @@ public class Group {
 
     @Exclude
     public void addEvent(String eventID, String eventName){
-        if(events.get(eventID) == null)
-            events.put(eventID,eventName);
+        if(events.get(eventID) == null) {
+            Event temp = new Event();
+            temp.setEventName(eventName);
+            events.put(eventID, temp);
+        }
     }
 
     @Exclude
