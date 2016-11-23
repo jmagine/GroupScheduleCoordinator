@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 
 public class AddMemberToGroup extends AppCompatActivity {
+    private String groupID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class AddMemberToGroup extends AppCompatActivity {
             ArrayList<String> group_list = new ArrayList<>();
             if( extras != null ) {
                 group_list = extras.getStringArrayList("groupList");
+                groupID = extras.getString("groupID");
             }
 
             if(group_list == null)
@@ -51,9 +53,12 @@ public class AddMemberToGroup extends AppCompatActivity {
             }
             group_list.add(memberEmail);
 
-            //intent.putExtra("memberName", memberName);
             intent.putStringArrayListExtra("groupList", group_list);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("member_name", memberName);
+            intent.putExtra("member_email", memberEmail);
+            intent.putExtra("groupID",groupID);
+            intent.putExtra("calling","addMember");
             startActivity(intent);
         }
 
