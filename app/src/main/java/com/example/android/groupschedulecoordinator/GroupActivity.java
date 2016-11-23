@@ -35,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -47,19 +48,24 @@ public class GroupActivity extends AppCompatActivity {
     private ListView lvMem;
     private ListView lvEvent;
     private ArrayList<String> group_list;
+    private ArrayList<String> groupID_list;
     private ArrayList<String> event_list;
     private ArrayList<String> eventID_list;
     private HashMap<String, Event> currEvents;
+    private HashMap<String, String> currGroup;
     private final Context c = this;
     private WeekView mWeekView;
     private WeekView.EventClickListener mEventClickListener;
     private WeekView.EventLongPressListener mEventLongPressListener;
     private DatabaseReference mDatabase;
     private DatabaseReference mGroupsReference;
+    private DatabaseReference mMembersRefernce;
     private Group currentGroup;
     private String groupID;
     private ValueEventListener mListener;
     private String calling;
+    private String memberName;
+    private String memberEmail;
 
 
     WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
@@ -94,6 +100,7 @@ public class GroupActivity extends AppCompatActivity {
 
         lvMem = (ListView) findViewById(R.id.lvMembers);
         group_list = new ArrayList<String>();
+        groupID_list = new ArrayList<>();
 
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
         event_list = new ArrayList<String>();
@@ -112,12 +119,17 @@ public class GroupActivity extends AppCompatActivity {
             currentGroup = new Group();
 
             mGroupsReference = mDatabase.child("groups").child(groupID);
+            mMembersRefernce = mDatabase.child("groups").child(groupID);
             System.out.println("GroupActivity Database Group Reference: " + mGroupsReference.toString());
             group_list = bundle1.getStringArrayList("groupList");
             event_list = bundle1.getStringArrayList("eventList");
 
             calling = bundle1.getString("calling");
 
+            memberName = bundle1.getString("member_name");
+            memberEmail = bundle1.getString("member_email");
+            if(memberName != null)
+                memberName = memberEmail.replace('.',(char)0xA4);
         }
         else
             Log.d("jlogs", "bundle is null");
@@ -148,7 +160,7 @@ public class GroupActivity extends AppCompatActivity {
 //        setSupportActionBar(toolbar);
 
         Bundle extras = getIntent().getExtras();
-        String groupName = extras.getString("groupName");
+        final String groupName = extras.getString("groupName");
 
         TextView tbGroupName = (TextView) findViewById(R.id.groupName);
         tbGroupName.setText(groupName);
@@ -228,6 +240,7 @@ public class GroupActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(GroupActivity.this, AddMemberToGroup.class);
                 intent.putStringArrayListExtra("groupList", group_list);
+                intent.putExtra("groupID", groupID);
                 startActivity(intent);
                 //startActivity(new Intent(GroupActivity.this, ActivityCreateGroup.class));
             }
@@ -294,6 +307,7 @@ public class GroupActivity extends AppCompatActivity {
                     currentGroup.setMembers(tempGroup.getMembers());
                     currentGroup.setGroupName(tempGroup.getGroupName());
                     updateEventList();
+                    updateMemberList();
                 }
                 else{
                     System.out.println(dataSnapshot.toString()+"Does not exist");
@@ -317,7 +331,56 @@ public class GroupActivity extends AppCompatActivity {
 
             addEvent(name, 1, 2);
         }
-        
+        if(calling.equals("addMember")){
+            addMember(memberName, memberEmail);
+        }
+
+    }
+
+    private void updateMemberList(){
+        lvMem = (ListView) findViewById(R.id.lvMembers);
+
+        group_list = new ArrayList<>();
+        groupID_list = new ArrayList<>();
+        HashMap<String,String> memberMap;
+
+        if (currentGroup.getMembers() != null) {
+            System.out.println("TLOG: Setting current group to be currentGroup.getMembers()");
+            memberMap = currentGroup.getMembers();
+            System.out.println(memberMap.size() + " is the size!");
+        }
+        else{
+            System.out.println("AMZ: Setting current group to be new");
+            memberMap = new HashMap<>();
+        }
+        Set<String> memberSet = memberMap.keySet();
+        System.out.println("AMZ: Size of keyset is: " + memberSet.size());
+        ArrayList<String> sortedMemberKeys = new ArrayList<>();
+        for(String keys: memberSet){
+            sortedMemberKeys.add(keys);
+        }
+        Collections.sort(sortedMemberKeys);
+        System.out.println("AMZ: Size of sortedKeys is: " + sortedMemberKeys.size());
+
+        if(currGroup == null) currGroup = new HashMap<>();
+        for(String sortedKeys: sortedMemberKeys){
+            groupID_list.add(sortedKeys);
+            group_list.add(memberMap.get(sortedKeys));
+            System.out.println("AMZ: Sorted keys is: "+ sortedKeys);
+            System.out.println("AMZ: key maps to: " + memberMap.get(sortedKeys));
+            currGroup.put(sortedKeys,memberMap.get(sortedKeys));
+        }
+
+        if (group_list != null) {
+            ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(
+                    this,
+                    android.R.layout.simple_list_item_1,
+                    group_list);
+            lvMem.setAdapter(arrayAdapter2);
+        }
+
+        System.out.println("AMZ: size of currGroup before setValue: " + currGroup.size());
+        mMembersRefernce.child("members").setValue(currGroup);
     }
 
     private void updateEventList(){
@@ -382,6 +445,12 @@ public class GroupActivity extends AppCompatActivity {
         */
     }
 
+    private void addMember(String name, String email){
+        if(currGroup == null){
+            currGroup = new HashMap<>();
+        }
+        currGroup.put(name,email);
+    }
     private void addEvent(String eventName, int start, int duration){
         System.out.println("Entered addEvent: " + eventName + " " + start + " " + duration);
         System.out.println("EventList: " + event_list);
