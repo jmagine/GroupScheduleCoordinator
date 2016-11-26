@@ -15,12 +15,6 @@ import java.util.Map;
 import com.example.android.groupschedulecoordinator.Event;
 
 public class EventTests {
-    @Before
-    public void initialize() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-    }
-
     @Test
     public void setHostIDTest() {
         ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
