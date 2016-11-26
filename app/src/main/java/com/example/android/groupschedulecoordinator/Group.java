@@ -25,7 +25,7 @@ public class Group {
     }
 
     public void addMember(String newPersonID, String newperson){
-        if(members.get(newperson)==null)
+        if(members.get(newPersonID)==null)
             members.put(newPersonID, newperson);
     }
 
