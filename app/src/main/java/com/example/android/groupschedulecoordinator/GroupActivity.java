@@ -429,6 +429,13 @@ public class GroupActivity extends AppCompatActivity {
             lvEvent.setAdapter(arrayAdapter);
         }
 
+        for(String eventID : eventID_list){
+            Event temp = currEvents.get(eventID);
+            if(temp!=null){
+
+            }
+        }
+
         mGroupsReference.child("events").setValue(currEvents);
 
         /*
@@ -455,8 +462,13 @@ public class GroupActivity extends AppCompatActivity {
         System.out.println("Entered addEvent: " + eventName + " " + start + " " + duration);
         System.out.println("EventList: " + event_list);
         System.out.println("currentGroup: " + currentGroup.toString());
-        Event tempEvent = new Event();
-        tempEvent.setEventName(eventName);
+        HashMap<String,String> members = currentGroup.getMembers();
+        Set<String> tempSet = members.keySet();
+        ArrayList<String> memList = new ArrayList<String>();
+        for(String s:tempSet){
+            memList.add(s);
+        }
+        Event tempEvent = new Event(eventName, memList);
         tempEvent.setStart(start);
         tempEvent.setEnd(start + duration);
 

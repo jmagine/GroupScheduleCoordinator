@@ -13,6 +13,7 @@ public class Event {
     private String eventName;
     private String hostID;
     private int start;
+    private int duration;
     private int end;
     private boolean isReady;
     private ArrayList<String> pendingUsers;
@@ -26,6 +27,7 @@ public class Event {
         completedUsers = new ArrayList<String>();
         this.eventName = name;
         this.start = 0;
+        this.duration = 0;
         this.end = 0;
         isReady = false;
     }
@@ -34,13 +36,11 @@ public class Event {
 
     public String getHostID() { return hostID; }
 
-    public String getEventID(){
-        return eventName;
-    }
-
     public int getStart(){
         return start;
     }
+
+    public int getDuration() { return duration; }
 
     public int getEnd(){
         return end;
@@ -71,8 +71,12 @@ public class Event {
         }
     }
 
+    public void setDuration(int dur){
+        duration = dur;
+    }
+
     public void setEnd(int end1){
-        if (end1 >= 0) {
+        if (end1 >= 0 && end1 <=48) {
             end = end1;
         }
         else {
@@ -98,6 +102,8 @@ public class Event {
             pendingUsers.remove(pendingUsers.indexOf(user));
         if(completedUsers.indexOf(user)==-1)
             completedUsers.add(user);
+        if(pendingUsers.isEmpty())
+            isReady = true;
         return isReady;
     }
 
