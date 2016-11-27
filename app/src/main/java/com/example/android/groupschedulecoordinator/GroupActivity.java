@@ -53,6 +53,7 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<String> eventID_list;
     private HashMap<String, Event> currEvents;
     private HashMap<String, String> currGroup;
+    private HashMap<String, String> currAccepted;
     private final Context c = this;
     private WeekView mWeekView;
     private WeekView.EventClickListener mEventClickListener;
@@ -60,12 +61,15 @@ public class GroupActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private DatabaseReference mGroupsReference;
     private DatabaseReference mMembersRefernce;
+    private DatabaseReference mAcceptedReference;
     private Group currentGroup;
     private String groupID;
     private ValueEventListener mListener;
     private String calling;
     private String memberName;
     private String memberEmail;
+    private String groupName;
+    private User currentUser;
 
 
     WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
@@ -117,6 +121,7 @@ public class GroupActivity extends AppCompatActivity {
             }
 
             currentGroup = new Group();
+            currentUser = new User();
 
             mGroupsReference = mDatabase.child("groups").child(groupID);
             mMembersRefernce = mDatabase.child("groups").child(groupID);
@@ -125,7 +130,6 @@ public class GroupActivity extends AppCompatActivity {
             event_list = bundle1.getStringArrayList("eventList");
 
             calling = bundle1.getString("calling");
-
             memberName = bundle1.getString("member_name");
             memberEmail = bundle1.getString("member_email");
             if(memberName != null)
@@ -381,6 +385,77 @@ public class GroupActivity extends AppCompatActivity {
 
         System.out.println("AMZ: size of currGroup before setValue: " + currGroup.size());
         mMembersRefernce.child("members").setValue(currGroup);
+
+        //update user's accepted groups
+        System.out.println("AMZ: MemberName is: " + memberName);
+        if(memberName != null){
+            System.out.println("AMZ: NONNULL- MemberName is: " + memberName);
+            mAcceptedReference = mDatabase.child("users").child(memberName);
+            ValueEventListener acceptedSnapShot = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        System.out.println("DMZ: IN UPDATING ACCEPTEDGROUPS");
+                        User tempUser = dataSnapshot.getValue(User.class);
+                        if(tempUser.getAcceptedGroups() == null){
+                            System.out.println("DMZ: IN get ACCEPTEDGROUPS");
+                            tempUser.setAcceptedGroups(new HashMap<String, String>());
+                        }
+                        if(tempUser.getUserName() == null){
+                            System.out.println("DMZ: IN get username");
+                            tempUser.setUserName("");
+                        }
+                        if(tempUser.getFreeTimes() == null){
+                            System.out.println("DMZ: IN get freetimes");
+                            tempUser.setFreeTimes(new HashMap<String, ArrayList<Integer>>());
+                        }
+                        if(tempUser.getPendingGroups() == null){
+                            System.out.println("DMZ: IN get pending");
+                            //tempUser.setPendingGroups(new HashMap<String, String>());
+                        }
+                        if(currAccepted == null){
+                            System.out.println("DMZ: IN null currEvent");
+                            currAccepted = new HashMap<>();
+                        }
+                        currAccepted = tempUser.getAcceptedGroups();
+                        System.out.println("DMZ: CurrAccepted size: " + currAccepted.size());
+                        currAccepted.put(groupID,currentGroup.getGroupName());
+                        tempUser.setAcceptedGroups(currAccepted);
+                        if(tempUser.getAcceptedGroups().size() > 0){
+                            System.out.println("DMZ: Inside >0 condtion");
+                            currentUser.setAcceptedGroups(tempUser.getPendingGroups());
+                            currentUser.setPendingGroups(tempUser.getPendingGroups());
+                            currentUser.setUserName(tempUser.getUserName());
+                            currentUser.setFreeTimes(tempUser.getFreeTimes());
+                        }
+                        System.out.println("DMZ: updating currentUser's accepted groups");
+                        if(tempUser.getUserName() != null){
+                            System.out.println("DMZ: Currentuser is: " + tempUser.getUserName());
+                        }
+                        if(tempUser.getAcceptedGroups() != null){
+                            System.out.println("DMZ: Size of acceptedGroups is: " + tempUser.getAcceptedGroups().size() );
+                        }
+                        if(tempUser.getAcceptedGroups().size() > 0)
+                            mAcceptedReference.setValue(tempUser);
+                    }else{
+                        System.out.println("DMZ: DNE");
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mAcceptedReference.addValueEventListener(acceptedSnapShot);
+
+            //if(currAccepted == null) currAccepted = new HashMap<>();
+            //currAccepted.put(groupID, "test");
+            //mAcceptedReference.child("acceptedGroups").setValue(currAccepted);
+
+        }
+        //HashMap<String,String> currAccepted = new HashMap<>();
+        //System.out.println("AMZ: Group name is: " + groupName);
+        //currAccepted.put(groupID, groupName);
+        //mAcceptedReference.child("acceptedGroups").setValue(currAccepted);
     }
 
     private void updateEventList(){
