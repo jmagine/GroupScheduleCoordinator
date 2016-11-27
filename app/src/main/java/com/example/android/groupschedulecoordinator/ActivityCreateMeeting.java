@@ -96,12 +96,17 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         Spinner beginMin = (Spinner) findViewById(R.id.spinnerBeginMinute);
         Spinner beginTime = (Spinner) findViewById(R.id.spinnerBeginToD);
 
+        Spinner endHour = (Spinner) findViewById(R.id.spinnerBeginHour);
+        Spinner endMin = (Spinner) findViewById(R.id.spinnerEndMinute);
+
         String eventNameStr = eventName.getText().toString();
         String hourLenStr = hourLength.getSelectedItem().toString();
         String minLenStr = minutesLength.getSelectedItem().toString();
         String beginHourStr = beginHour.getSelectedItem().toString();
         String beginMinStr = beginMin.getSelectedItem().toString();
         String beginTimeStr = beginTime.getSelectedItem().toString();
+        String endHourStr = endHour.getSelectedItem().toString();
+        String endMinStr = endMin.getSelectedItem().toString();
 
         String groupID;
 
@@ -109,6 +114,11 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             beginHourStr = "0" + beginHourStr;
         if(Integer.parseInt(beginMinStr) < 10)
             beginMinStr += "0";
+
+        if(Integer.parseInt(endHourStr) < 10)
+            endHourStr = "0" + endHourStr;
+        if(Integer.parseInt(beginMinStr) < 10)
+            endMinStr += "0";
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
         if(eventNameStr.isEmpty()) {
@@ -149,6 +159,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             intent.putStringArrayListExtra("eventList", event_list);
             intent.putExtra("eventName", eventNameStr);
             intent.putExtra("eventStart", beginHourStr);
+            intent.putExtra("eventEnd", endHourStr);
             intent.putExtra("eventDuration", hourLenStr);
             intent.putExtra("groupID", groupID);
             intent.putExtra("calling", "createMeeting");
