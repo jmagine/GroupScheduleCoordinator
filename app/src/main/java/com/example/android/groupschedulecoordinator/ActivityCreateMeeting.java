@@ -117,7 +117,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
 
         if(Integer.parseInt(endHourStr) < 10)
             endHourStr = "0" + endHourStr;
-        if(Integer.parseInt(beginMinStr) < 10)
+        if(Integer.parseInt(endMinStr) < 10)
             endMinStr += "0";
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
