@@ -222,6 +222,8 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         if(Integer.parseInt(endMinStr) < 10)
             endMinStr = endMinStr+"0";
 
+        System.out.println("Time: "+start +"-"+end+"-:"+duration);
+
         if(end>start){
             displayFuckingWarning("You're trying to go back in time!");
         }

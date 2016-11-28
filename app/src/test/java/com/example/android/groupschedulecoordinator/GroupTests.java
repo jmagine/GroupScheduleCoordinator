@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import com.example.android.groupschedulecoordinator.Group;
+import com.example.android.groupschedulecoordinator.Event;
 
 public class GroupTests {
     @Test
@@ -173,8 +174,19 @@ public class GroupTests {
     public void addEventTest() {
         try {
             Group testGroup = new Group("testgroup");
-            testGroup.addEvent("1", "event1");
-            assertThat(testGroup.getEvents().size(), is(1));
+            ArrayList<String> testArray = new ArrayList<>();
+            testArray.add("Bob");
+            testArray.add("Jack");
+            testArray.add("Jill");
+            Event testEvent = new Event("Test", testArray);
+            testGroup.addEvent(testEvent);
+            if (testGroup.getEvents().size() != 1) {
+                fail("Incorrect list size");
+            }
+            if (!testGroup.getEvents().get("Test").equals(testEvent)) {
+                fail("Incorrect element in list");
+            }
+            assertTrue(true);
         }
         catch (Exception e) {
             fail("Exception thrown");
