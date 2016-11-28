@@ -27,7 +27,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         app:rippleColor="@color/colorPrimary"
-        app:srcCompat="@android:drawable/ic_input_add"
+        app:srcCompat="@drawable/ic_plussignsmall"
         app:backgroundTint="@color/colorPrimaryDark" />
 
     <TextView
