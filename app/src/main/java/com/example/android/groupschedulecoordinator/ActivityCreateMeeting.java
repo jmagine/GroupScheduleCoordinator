@@ -226,7 +226,13 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             displayFuckingWarning("You're trying to go back in time!");
         }
         if(end==start){
-            displayFuckingWarning("You're trying to have a meeting with 0 length!");
+            displayFuckingWarning("Desired meeting 0 search range!");
+        }
+        if(duration ==0){
+            displayFuckingWarning("Desired meeting with 0 duration!");
+        }
+        if(start+duration>end){
+            displayFuckingWarning("Desired duration longer than search range!");
         }
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
