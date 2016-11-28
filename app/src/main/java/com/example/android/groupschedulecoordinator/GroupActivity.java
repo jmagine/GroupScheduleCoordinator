@@ -480,7 +480,31 @@ public class GroupActivity extends AppCompatActivity {
         System.out.println(sortedKeys);
 
         for(String s: sortedKeys){
-            event_list.add(s);
+            int time = currEvents.get(s).getStart();
+            int dur = currEvents.get(s).getDuration();
+
+            String start = "";
+            String end = "";
+            if(time / 2 < 10)
+                start += "0";
+            start += time / 2 + ":";
+
+            if(time % 2 == 0)
+                start += "00";
+            else
+                start += "30";
+
+            if((time + dur) / 2 < 10)
+                end = "0";
+
+            end += (time + dur) / 2 + ":";
+
+            if((time + dur) % 2 == 0)
+                end += "00";
+            else
+                end += "30";
+
+            event_list.add(s + " at " + start + " - " + end);
         }
 
         System.out.println("CurrEvents: " + currEvents);
