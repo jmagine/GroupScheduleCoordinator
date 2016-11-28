@@ -125,7 +125,8 @@ public class User implements Parcelable {
     public void acceptGroup(String groupID,String groupName){
         if(pendingGroups.get(groupID)!=null) {
             pendingGroups.remove(groupID);
-            if (acceptedGroups.get(groupID) == null)
+        }
+        if (acceptedGroups.get(groupID) == null) {
                 acceptedGroups.put(groupID, groupName);
         }
     }
