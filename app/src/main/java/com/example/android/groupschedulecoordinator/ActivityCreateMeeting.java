@@ -1,25 +1,16 @@
 package com.example.android.groupschedulecoordinator;
 
-import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.icu.util.Calendar;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -225,29 +216,29 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         System.out.println("Time: "+start +"-"+end+"-:"+duration);
 
         if(end>start){
-            displayFuckingWarning("You're trying to go back in time!");
+            displayWarning("You're trying to go back in time!");
         }
         if(end==start){
-            displayFuckingWarning("Desired meeting 0 search range!");
+            displayWarning("Desired meeting 0 search range!");
         }
         if(duration ==0){
-            displayFuckingWarning("Desired meeting with 0 duration!");
+            displayWarning("Desired meeting with 0 duration!");
         }
         if(start+duration>end){
-            displayFuckingWarning("Desired duration longer than search range!");
+            displayWarning("Desired duration longer than search range!");
         }
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
         if(eventNameStr.isEmpty()) {
-            displayFuckingWarning("Please enter a valid event name");
+            displayWarning("Please enter a valid event name");
         }
         else if(hourLenStr.isEmpty() || minLenStr.isEmpty())
         {
-            displayFuckingWarning("Please enter a valid length.");
+            displayWarning("Please enter a valid length.");
         }
         else if(beginHourStr.isEmpty() || beginMinStr.isEmpty())
         {
-            displayFuckingWarning("Please enter a valid begin time.");
+            displayWarning("Please enter a valid begin time.");
         }
         else
         {
@@ -269,7 +260,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             System.out.println("free calc: "+freeTimeCalculator.possibleTimes);
 
             if(freeTimeCalculator.possibleTimes.size() < 1){
-                displayFuckingWarning("Selected date and times have no possible meeting");
+                displayWarning("Selected date and times have no possible meeting");
                 return;
             }
 
@@ -322,7 +313,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
 
     }
 
-    public void displayFuckingWarning(String str) {
+    public void displayWarning(String str) {
         android.content.Context context = getApplicationContext();
         CharSequence warning = str;
         int duration = Toast.LENGTH_SHORT;
