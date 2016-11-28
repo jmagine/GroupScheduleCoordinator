@@ -215,31 +215,41 @@ public class ActivityCreateMeeting extends AppCompatActivity {
 
         System.out.println("Time: "+start +"-"+end+"-:"+duration);
 
-        if(end>start){
+        boolean printErrors = false;
+        if(end<start){
             displayWarning("You're trying to go back in time!");
+            printErrors = true;
         }
         if(end==start){
             displayWarning("Desired meeting 0 search range!");
+            printErrors = true;
         }
         if(duration ==0){
             displayWarning("Desired meeting with 0 duration!");
+            printErrors = true;
         }
         if(start+duration>end){
             displayWarning("Desired duration longer than search range!");
+            printErrors = true;
         }
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
         if(eventNameStr.isEmpty()) {
             displayWarning("Please enter a valid event name");
+            printErrors = true;
         }
         else if(hourLenStr.isEmpty() || minLenStr.isEmpty())
         {
             displayWarning("Please enter a valid length.");
+            printErrors = true;
         }
         else if(beginHourStr.isEmpty() || beginMinStr.isEmpty())
         {
             displayWarning("Please enter a valid begin time.");
+            printErrors = true;
         }
+        if(printErrors)
+            return;
         else
         {
             DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker2);
