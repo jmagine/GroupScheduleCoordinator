@@ -197,18 +197,18 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         String beginTimeStr = beginTime.getSelectedItem().toString();
         int start = Integer.parseInt(beginHourStr)*2 + Integer.parseInt(beginMinStr)/30;
         if(beginTime.equals("PM"))
-            start+=12;
+            start+=24;
         if(beginHourStr.equals("12"))
-            start-=12;
+            start-=24;
 
         String endHourStr = endHour.getSelectedItem().toString();
         String endMinStr = endMin.getSelectedItem().toString();
         String endTimeStr = endTime.getSelectedItem().toString();
         int end = Integer.parseInt(endHourStr)*2 + Integer.parseInt(endMinStr)/30;
         if(endTimeStr.equals("PM"))
-            end+=12;
+            end+=24;
         if(endTimeStr.equals("12"))
-            end-=12;
+            end-=24;
 
         String groupID;
 
@@ -221,6 +221,13 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             endHourStr = "0" + endHourStr;
         if(Integer.parseInt(endMinStr) < 10)
             endMinStr = endMinStr+"0";
+
+        if(end>start){
+            displayFuckingWarning("You're trying to go back in time!");
+        }
+        if(end==start){
+            displayFuckingWarning("You're trying to have a meeting with 0 length!");
+        }
 
         meetingStr += eventNameStr + " - " + beginHourStr + ":" + beginMinStr + " " + beginTimeStr;
         if(eventNameStr.isEmpty()) {
