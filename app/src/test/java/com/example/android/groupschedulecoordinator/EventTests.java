@@ -27,7 +27,7 @@ public class EventTests {
     public void getEventIDTest() {
         ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
         Event dummyEvent = new Event("testEvent", pendingUsers);
-        assertThat(dummyEvent.getEventID(), is("testEvent"));
+        assertThat(dummyEvent.getEventName(), is("testEvent"));
     }
 
     @Test

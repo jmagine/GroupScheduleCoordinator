@@ -60,11 +60,10 @@ public class Group {
     }
 
     @Exclude
-    public void addEvent(String eventID, String eventName){
+    public void addEvent(Event inEvent){
+        String eventID = inEvent.getEventName();
         if(events.get(eventID) == null) {
-            Event temp = new Event();
-            temp.setEventName(eventName);
-            events.put(eventID, temp);
+            events.put(eventID, inEvent);
         }
     }
 

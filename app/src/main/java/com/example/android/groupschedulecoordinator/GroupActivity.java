@@ -50,7 +50,6 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<String> group_list;
     private ArrayList<String> groupID_list;
     private ArrayList<String> event_list;
-    private ArrayList<String> eventID_list;
     private HashMap<String, Event> currEvents;
     private HashMap<String, String> currGroup;
     private HashMap<String, String> currAccepted;
@@ -108,7 +107,6 @@ public class GroupActivity extends AppCompatActivity {
 
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
         event_list = new ArrayList<String>();
-        eventID_list = new ArrayList<String>();
 
         final Bundle bundle1 = getIntent().getExtras();
         if(bundle1 != null)
@@ -284,7 +282,7 @@ public class GroupActivity extends AppCompatActivity {
                                 }
                             });
                 Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
-                intent.putStringArrayListExtra("eventList", event_list);
+                intent.putStringArrayListExtra("memberIDList", groupID_list);
                 intent.putExtra("groupID", groupID);
                 startActivity(intent);
             }
@@ -333,7 +331,7 @@ public class GroupActivity extends AppCompatActivity {
         if(calling.equals("createMeeting")) {
             String name = bundle1.getString("eventName");
 
-            addEvent(name, 1, 2);
+            //addEvent(name, 1, 2);
         }
         if(calling.equals("addMember")){
             addMember(memberName, memberEmail);
@@ -366,7 +364,7 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedMemberKeys);
         System.out.println("AMZ: Size of sortedKeys is: " + sortedMemberKeys.size());
 
-        if(currGroup == null) currGroup = new HashMap<>();
+        currGroup = new HashMap<>();
         for(String sortedKeys: sortedMemberKeys){
             groupID_list.add(sortedKeys);
             group_list.add(memberMap.get(sortedKeys));
@@ -464,18 +462,16 @@ public class GroupActivity extends AppCompatActivity {
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
 
         event_list = new ArrayList<String>();
-        eventID_list = new ArrayList<String>();
-        HashMap<String,Event> eventMap;
+        currEvents = currentGroup.getEvents();
 
-        if(currentGroup.getEvents() != null) {
-            eventMap = currentGroup.getEvents();
-            System.out.println("EventMap: " + eventMap);
+        if(currEvents != null) {
+            System.out.println("EventMap: " + currEvents);
         }
         else {
             System.out.println("currentGroup no events");
-            eventMap = new HashMap<>();
+            currentGroup.setEvents(new HashMap<String, Event>());
         }
-        Set<String> keySet = eventMap.keySet();
+        Set<String> keySet = currEvents.keySet();
         ArrayList<String> sortedKeys = new ArrayList<String>();
         for(String i:keySet){
             sortedKeys.add(i);
@@ -483,32 +479,18 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedKeys);
         System.out.println(sortedKeys);
 
-        if(currEvents == null) {
-            System.out.println("currEvents is null");
-            currEvents = new HashMap<>();
-        }
-
         for(String s: sortedKeys){
-            eventID_list.add(s);
-            event_list.add(eventMap.get(s).getEventName());
-            currEvents.put(s, eventMap.get(s));
+            event_list.add(s);
         }
 
         System.out.println("CurrEvents: " + currEvents);
 
-        if(event_list != null) {
+        if(event_list.size() != 0) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                   this,
                   android.R.layout.simple_list_item_1,
                   event_list);
             lvEvent.setAdapter(arrayAdapter);
-        }
-
-        for(String eventID : eventID_list){
-            Event temp = currEvents.get(eventID);
-            if(temp!=null){
-
-            }
         }
 
         mGroupsReference.child("events").setValue(currEvents);
