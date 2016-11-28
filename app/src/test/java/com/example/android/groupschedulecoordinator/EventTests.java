@@ -17,25 +17,40 @@ import com.example.android.groupschedulecoordinator.Event;
 public class EventTests {
     @Test
     public void setHostIDTest() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-        dummyEvent.setHostID("hoster");
-        assertThat(dummyEvent.getHostID(), is("hoster"));
+        try {
+            ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
+            Event dummyEvent = new Event("testEvent", pendingUsers);
+            dummyEvent.setHostID("hoster");
+            assertThat(dummyEvent.getHostID(), is("hoster"));
+        }
+        catch (Exception e) {
+            fail("Exception thrown");
+        }
     }
 
     @Test
-    public void getEventIDTest() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-        assertThat(dummyEvent.getEventID(), is("testEvent"));
+    public void getEventNameTest() {
+        try {
+            ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
+            Event dummyEvent = new Event("testEvent", pendingUsers);
+            assertThat(dummyEvent.getEventName(), is("testEvent"));
+        }
+        catch (Exception e) {
+            fail("Exception thrown");
+        }
     }
 
     @Test
     public void setStartTestValid() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-        dummyEvent.setStart(2);
-        assertThat(dummyEvent.getStart(), is(2));
+        try {
+            ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
+            Event dummyEvent = new Event("testEvent", pendingUsers);
+            dummyEvent.setStart(2);
+            assertThat(dummyEvent.getStart(), is(2));
+        }
+        catch (Exception e) {
+            fail("Exception thrown");
+        }
     }
 
     @Test
@@ -56,10 +71,15 @@ public class EventTests {
 
     @Test
     public void setEndTestValid() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-        dummyEvent.setEnd(3);
-        assertThat(dummyEvent.getEnd(), is(3));
+        try {
+            ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
+            Event dummyEvent = new Event("testEvent", pendingUsers);
+            dummyEvent.setEnd(3);
+            assertThat(dummyEvent.getEnd(), is(3));
+        }
+        catch (Exception e) {
+            fail("Exception thrown");
+        }
     }
 
     @Test
@@ -197,30 +217,35 @@ public class EventTests {
 
     @Test
     public void toMapTest() {
-        ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
-        Event dummyEvent = new Event("testEvent", pendingUsers);
-        dummyEvent.setStart(2);
-        dummyEvent.setEnd(3);
-        dummyEvent.setReady(true);
-        Map<String,Object> mappedEvent = dummyEvent.toMap();
-        if (!mappedEvent.get("name").equals("testEvent")) {
-            fail("Incorrect event name");
+        try {
+            ArrayList<String> pendingUsers = new ArrayList<>(Arrays.asList("user1", "user2", "user3"));
+            Event dummyEvent = new Event("testEvent", pendingUsers);
+            dummyEvent.setStart(2);
+            dummyEvent.setEnd(3);
+            dummyEvent.setReady(true);
+            Map<String, Object> mappedEvent = dummyEvent.toMap();
+            if (!mappedEvent.get("name").equals("testEvent")) {
+                fail("Incorrect event name");
+            }
+            if ((int) mappedEvent.get("start") != 2) {
+                fail("Incorrect start");
+            }
+            if ((int) mappedEvent.get("end") != 3) {
+                fail("Incorrect end");
+            }
+            if (!(boolean) mappedEvent.get("isReady")) {
+                fail("Incorrect isReady");
+            }
+            if (mappedEvent.get("pendingUsers") != dummyEvent.getPendingUsers()) {
+                fail("Incorrect pendingUsers");
+            }
+            if (mappedEvent.get("completedUsers") != dummyEvent.getCompletedUsers()) {
+                fail("Incorrect completedUsers");
+            }
+            assertTrue(true);
         }
-        if ((int)mappedEvent.get("start") != 2) {
-            fail("Incorrect start");
+        catch (Exception e) {
+            fail("Exception thrown");
         }
-        if ((int)mappedEvent.get("end") != 3) {
-            fail("Incorrect end");
-        }
-        if (!(boolean)mappedEvent.get("isReady")) {
-            fail("Incorrect isReady");
-        }
-        if (mappedEvent.get("pendingUsers") != dummyEvent.getPendingUsers()) {
-            fail("Incorrect pendingUsers");
-        }
-        if (mappedEvent.get("completedUsers") != dummyEvent.getCompletedUsers()) {
-            fail("Incorrect completedUsers");
-        }
-        assertTrue(true);
     }
 }

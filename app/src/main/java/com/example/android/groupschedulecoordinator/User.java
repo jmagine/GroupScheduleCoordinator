@@ -123,10 +123,11 @@ public class User implements Parcelable {
 
     @Exclude
     public void acceptGroup(String groupID,String groupName){
-        if(pendingGroups.get(groupID)!=null)
+        if(pendingGroups.get(groupID)!=null) {
             pendingGroups.remove(groupID);
-        if(acceptedGroups.get(groupID)==null)
-            acceptedGroups.put(groupID,groupName);
+            if (acceptedGroups.get(groupID) == null)
+                acceptedGroups.put(groupID, groupName);
+        }
     }
 
     @Exclude

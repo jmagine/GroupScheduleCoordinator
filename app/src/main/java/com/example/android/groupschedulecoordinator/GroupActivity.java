@@ -50,9 +50,9 @@ public class GroupActivity extends AppCompatActivity {
     private ArrayList<String> group_list;
     private ArrayList<String> groupID_list;
     private ArrayList<String> event_list;
-    private ArrayList<String> eventID_list;
     private HashMap<String, Event> currEvents;
     private HashMap<String, String> currGroup;
+    private HashMap<String, String> currAccepted;
     private final Context c = this;
     private WeekView mWeekView;
     private WeekView.EventClickListener mEventClickListener;
@@ -60,12 +60,15 @@ public class GroupActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private DatabaseReference mGroupsReference;
     private DatabaseReference mMembersRefernce;
+    private DatabaseReference mAcceptedReference;
     private Group currentGroup;
     private String groupID;
     private ValueEventListener mListener;
     private String calling;
     private String memberName;
     private String memberEmail;
+    private String groupName;
+    private User currentUser;
 
 
     WeekView.MonthChangeListener mMonthChangeListener = new WeekView.MonthChangeListener() {
@@ -104,7 +107,6 @@ public class GroupActivity extends AppCompatActivity {
 
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
         event_list = new ArrayList<String>();
-        eventID_list = new ArrayList<String>();
 
         final Bundle bundle1 = getIntent().getExtras();
         if(bundle1 != null)
@@ -117,6 +119,7 @@ public class GroupActivity extends AppCompatActivity {
             }
 
             currentGroup = new Group();
+            currentUser = new User();
 
             mGroupsReference = mDatabase.child("groups").child(groupID);
             mMembersRefernce = mDatabase.child("groups").child(groupID);
@@ -125,7 +128,6 @@ public class GroupActivity extends AppCompatActivity {
             event_list = bundle1.getStringArrayList("eventList");
 
             calling = bundle1.getString("calling");
-
             memberName = bundle1.getString("member_name");
             memberEmail = bundle1.getString("member_email");
             if(memberName != null)
@@ -280,7 +282,7 @@ public class GroupActivity extends AppCompatActivity {
                                 }
                             });
                 Intent intent = new Intent(GroupActivity.this, ActivityCreateMeeting.class);;
-                intent.putStringArrayListExtra("eventList", event_list);
+                intent.putStringArrayListExtra("memberIDList", groupID_list);
                 intent.putExtra("groupID", groupID);
                 startActivity(intent);
             }
@@ -329,7 +331,7 @@ public class GroupActivity extends AppCompatActivity {
         if(calling.equals("createMeeting")) {
             String name = bundle1.getString("eventName");
 
-            addEvent(name, 1, 2);
+            //addEvent(name, 1, 2);
         }
         if(calling.equals("addMember")){
             addMember(memberName, memberEmail);
@@ -362,7 +364,7 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedMemberKeys);
         System.out.println("AMZ: Size of sortedKeys is: " + sortedMemberKeys.size());
 
-        if(currGroup == null) currGroup = new HashMap<>();
+        currGroup = new HashMap<>();
         for(String sortedKeys: sortedMemberKeys){
             groupID_list.add(sortedKeys);
             group_list.add(memberMap.get(sortedKeys));
@@ -381,6 +383,77 @@ public class GroupActivity extends AppCompatActivity {
 
         System.out.println("AMZ: size of currGroup before setValue: " + currGroup.size());
         mMembersRefernce.child("members").setValue(currGroup);
+
+        //update user's accepted groups
+        System.out.println("AMZ: MemberName is: " + memberName);
+        if(memberName != null){
+            System.out.println("AMZ: NONNULL- MemberName is: " + memberName);
+            mAcceptedReference = mDatabase.child("users").child(memberName);
+            ValueEventListener acceptedSnapShot = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        System.out.println("DMZ: IN UPDATING ACCEPTEDGROUPS");
+                        User tempUser = dataSnapshot.getValue(User.class);
+                        if(tempUser.getAcceptedGroups() == null){
+                            System.out.println("DMZ: IN get ACCEPTEDGROUPS");
+                            tempUser.setAcceptedGroups(new HashMap<String, String>());
+                        }
+                        if(tempUser.getUserName() == null){
+                            System.out.println("DMZ: IN get username");
+                            tempUser.setUserName("");
+                        }
+                        if(tempUser.getFreeTimes() == null){
+                            System.out.println("DMZ: IN get freetimes");
+                            tempUser.setFreeTimes(new HashMap<String, ArrayList<Integer>>());
+                        }
+                        if(tempUser.getPendingGroups() == null){
+                            System.out.println("DMZ: IN get pending");
+                            //tempUser.setPendingGroups(new HashMap<String, String>());
+                        }
+                        if(currAccepted == null){
+                            System.out.println("DMZ: IN null currEvent");
+                            currAccepted = new HashMap<>();
+                        }
+                        currAccepted = tempUser.getAcceptedGroups();
+                        System.out.println("DMZ: CurrAccepted size: " + currAccepted.size());
+                        currAccepted.put(groupID,currentGroup.getGroupName());
+                        tempUser.setAcceptedGroups(currAccepted);
+                        if(tempUser.getAcceptedGroups().size() > 0){
+                            System.out.println("DMZ: Inside >0 condtion");
+                            currentUser.setAcceptedGroups(tempUser.getPendingGroups());
+                            currentUser.setPendingGroups(tempUser.getPendingGroups());
+                            currentUser.setUserName(tempUser.getUserName());
+                            currentUser.setFreeTimes(tempUser.getFreeTimes());
+                        }
+                        System.out.println("DMZ: updating currentUser's accepted groups");
+                        if(tempUser.getUserName() != null){
+                            System.out.println("DMZ: Currentuser is: " + tempUser.getUserName());
+                        }
+                        if(tempUser.getAcceptedGroups() != null){
+                            System.out.println("DMZ: Size of acceptedGroups is: " + tempUser.getAcceptedGroups().size() );
+                        }
+                        if(tempUser.getAcceptedGroups().size() > 0)
+                            mAcceptedReference.setValue(tempUser);
+                    }else{
+                        System.out.println("DMZ: DNE");
+                    }
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            };
+            mAcceptedReference.addValueEventListener(acceptedSnapShot);
+
+            //if(currAccepted == null) currAccepted = new HashMap<>();
+            //currAccepted.put(groupID, "test");
+            //mAcceptedReference.child("acceptedGroups").setValue(currAccepted);
+
+        }
+        //HashMap<String,String> currAccepted = new HashMap<>();
+        //System.out.println("AMZ: Group name is: " + groupName);
+        //currAccepted.put(groupID, groupName);
+        //mAcceptedReference.child("acceptedGroups").setValue(currAccepted);
     }
 
     private void updateEventList(){
@@ -389,18 +462,16 @@ public class GroupActivity extends AppCompatActivity {
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
 
         event_list = new ArrayList<String>();
-        eventID_list = new ArrayList<String>();
-        HashMap<String,Event> eventMap;
+        currEvents = currentGroup.getEvents();
 
-        if(currentGroup.getEvents() != null) {
-            eventMap = currentGroup.getEvents();
-            System.out.println("EventMap: " + eventMap);
+        if(currEvents != null) {
+            System.out.println("EventMap: " + currEvents);
         }
         else {
             System.out.println("currentGroup no events");
-            eventMap = new HashMap<>();
+            currentGroup.setEvents(new HashMap<String, Event>());
         }
-        Set<String> keySet = eventMap.keySet();
+        Set<String> keySet = currEvents.keySet();
         ArrayList<String> sortedKeys = new ArrayList<String>();
         for(String i:keySet){
             sortedKeys.add(i);
@@ -408,32 +479,42 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedKeys);
         System.out.println(sortedKeys);
 
-        if(currEvents == null) {
-            System.out.println("currEvents is null");
-            currEvents = new HashMap<>();
-        }
-
         for(String s: sortedKeys){
-            eventID_list.add(s);
-            event_list.add(eventMap.get(s).getEventName());
-            currEvents.put(s, eventMap.get(s));
+            int time = currEvents.get(s).getStart();
+            int dur = currEvents.get(s).getDuration();
+
+            String start = "";
+            String end = "";
+            if(time / 2 < 10)
+                start += "0";
+            start += time / 2 + ":";
+
+            if(time % 2 == 0)
+                start += "00";
+            else
+                start += "30";
+
+            if((time + dur) / 2 < 10)
+                end = "0";
+
+            end += (time + dur) / 2 + ":";
+
+            if((time + dur) % 2 == 0)
+                end += "00";
+            else
+                end += "30";
+
+            event_list.add(s + " at " + start + " - " + end);
         }
 
         System.out.println("CurrEvents: " + currEvents);
 
-        if(event_list != null) {
+        if(event_list.size() != 0) {
             ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
                   this,
                   android.R.layout.simple_list_item_1,
                   event_list);
             lvEvent.setAdapter(arrayAdapter);
-        }
-
-        for(String eventID : eventID_list){
-            Event temp = currEvents.get(eventID);
-            if(temp!=null){
-
-            }
         }
 
         mGroupsReference.child("events").setValue(currEvents);
