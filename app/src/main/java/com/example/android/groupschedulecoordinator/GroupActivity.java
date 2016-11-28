@@ -364,7 +364,7 @@ public class GroupActivity extends AppCompatActivity {
         Collections.sort(sortedMemberKeys);
         System.out.println("AMZ: Size of sortedKeys is: " + sortedMemberKeys.size());
 
-        currGroup = new HashMap<>();
+        if(currGroup == null) currGroup = new HashMap<>();
         for(String sortedKeys: sortedMemberKeys){
             groupID_list.add(sortedKeys);
             group_list.add(memberMap.get(sortedKeys));
