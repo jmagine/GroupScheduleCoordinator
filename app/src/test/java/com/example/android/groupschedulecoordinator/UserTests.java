@@ -295,52 +295,6 @@ public class UserTests {
     }
 
     @Test
-    public void acceptInvalidGroupTest() {
-        try {
-            User testUser = new User();
-            HashMap<String, String> pendingGroups = new HashMap<>();
-            pendingGroups.put("1", "foo");
-            pendingGroups.put("2", "bar");
-            pendingGroups.put("3", "test");
-            testUser.setPendingGroups(pendingGroups);
-            HashMap<String, String> acceptedGroups = new HashMap<>();
-            acceptedGroups.put("4", "oof");
-            acceptedGroups.put("5", "rab");
-            acceptedGroups.put("6", "tset");
-            testUser.setAcceptedGroups(acceptedGroups);
-            testUser.acceptGroup("7", "bar");
-            if (testUser.getPendingGroups().size() != 3) {
-                fail("Incorrect list size");
-            }
-            if (testUser.getAcceptedGroups().size() != 3) {
-                fail("Incorrect list size");
-            }
-            if (!testUser.getPendingGroups().get("1").equals("foo")) {
-                fail("Incorrect element in list");
-            }
-            if (!testUser.getPendingGroups().get("2").equals("bar")) {
-                fail("Incorrect element in list");
-            }
-            if (!testUser.getPendingGroups().get("3").equals("test")) {
-                fail("Incorrect element in list");
-            }
-            if (!testUser.getAcceptedGroups().get("4").equals("oof")) {
-                fail("Incorrect element in list");
-            }
-            if (!testUser.getAcceptedGroups().get("5").equals("rab")) {
-                fail("Incorrect element in list");
-            }
-            if (!testUser.getAcceptedGroups().get("6").equals("tset")) {
-                fail("Incorrect element in list");
-            }
-            assertTrue(true);
-        }
-        catch (Exception e) {
-            fail("Exception thrown");
-        }
-    }
-
-    @Test
     public void removeSelfFromValidGroupTest() {
         try {
             User testUser = new User();
