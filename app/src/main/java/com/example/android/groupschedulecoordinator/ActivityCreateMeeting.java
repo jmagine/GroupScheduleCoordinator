@@ -255,7 +255,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             int dayOfMonth = datePicker.getDayOfMonth();
             int dateYear = datePicker.getYear();
             int dateMonth = datePicker.getMonth();
-            String dateAsString = ""+dateMonth+"-"+dayOfMonth+"-"+dateYear;
+            String dateAsString = dateMonth+"-"+dayOfMonth+"-"+dateYear;
             System.out.println("Trying: " + dateAsString);
             freeTimeCalculator = new FreeTimeCalculator(start,end,duration);
             for(int i=0;i<listOfPeopleFreeTimes.size();i++){
@@ -286,6 +286,8 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             event.setStart(freeTimeCalculator.possibleTimes.get(0));
             event.setEnd(freeTimeCalculator.possibleTimes.get(0)+duration);
             event.setDuration(duration);
+            dateAsString = (1+dateMonth)+"-"+dayOfMonth+"-"+dateYear;
+            event.setDate(dateAsString);
 
             currentGroup.addEvent(event);
 
