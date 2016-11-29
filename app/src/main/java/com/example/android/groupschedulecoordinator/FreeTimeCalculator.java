@@ -51,7 +51,9 @@ public class FreeTimeCalculator {
                 summedTimes.set(i,summedTimes.get(i)+currList.get(i));
             }
         }
+        System.out.println("SummedTimes = " + summedTimes.toString());
         summedBlocks = sumUpBlocks(summedTimes);
+        System.out.println("blockTimes = " + summedBlocks.toString());
 
         int currMinBlockTime = -1;
         while(possibleTimes.size()<10){

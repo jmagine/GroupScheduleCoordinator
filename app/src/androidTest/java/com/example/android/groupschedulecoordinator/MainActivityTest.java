@@ -2,6 +2,7 @@ package com.example.android.groupschedulecoordinator;
 
 import android.support.test.rule.ActivityTestRule;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -26,22 +27,22 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Test
-    public void validateMakeGroup() {
+    @Before
+    public void setUp() {
         //click on "plus button"
         onView(withId(R.id.myFab))
                 .perform(click());
 
         //find text box and type group1
         onView(withId(R.id.userInputDialog))
-                .perform(typeText("group2"));
+                .perform(typeText("group1"));
 
         //click create
         onView(withText("Create"))
                 .perform(click());
 
         //assert that group shows up in list
-        withText(containsString("group2")).matches(onView(withId(R.id.groupName)));
+        withText(containsString("group1")).matches(onView(withId(R.id.groupName)));
     }
 
     @Test

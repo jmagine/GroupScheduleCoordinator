@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (mLastError instanceof UserRecoverableAuthIOException) {
                     startActivityForResult(
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            TestActivity.REQUEST_AUTHORIZATION);
+                            1001);
                 } else {
                     //mOutputText.setText("The following error occurred:\n"
                     //+ mLastError.getMessage());

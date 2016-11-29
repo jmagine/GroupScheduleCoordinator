@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "356922576008-c2g8vk4d7p2nse1e188t5mmcukiekf0n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.groupschedulecoordinator",
+            "certificate_hash": "AD5C7B6AA6E369FB12237ED0CA3B061A8AD94399"
+          }
+        },
+        {
           "client_id": "356922576008-828dvcte72ni66u4839bt9110lnej0d8.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -101,4 +109,3 @@
   ],
   "configuration_version": "1"
 }
-
