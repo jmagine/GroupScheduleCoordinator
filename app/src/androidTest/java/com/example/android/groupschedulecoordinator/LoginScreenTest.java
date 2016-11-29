@@ -34,7 +34,7 @@ public class LoginScreenTest {
     public void validateSignIn() {
         onView(withText("Sign in with Google"))
                 .perform(click());
-                //.check(matches(withText("Add account")));
+        //can't use espresso to test auth, must use uiautomator
     }
 
 
