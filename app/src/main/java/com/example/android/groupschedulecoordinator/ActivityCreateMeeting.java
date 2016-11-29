@@ -173,10 +173,9 @@ public class ActivityCreateMeeting extends AppCompatActivity {
         Spinner beginMin = (Spinner) findViewById(R.id.spinnerBeginMinute);
         Spinner beginTime = (Spinner) findViewById(R.id.spinnerBeginToD);
 
-        Spinner endHour = (Spinner) findViewById(R.id.spinnerBeginHour);
+        Spinner endHour = (Spinner) findViewById(R.id.spinnerEndHour);
         Spinner endMin = (Spinner) findViewById(R.id.spinnerEndMinute);
         Spinner endTime = (Spinner) findViewById(R.id.spinnerEndToD);
-
 
         String eventNameStr = eventName.getText().toString();
         String hourLenStr = hourLength.getSelectedItem().toString();
@@ -255,7 +254,7 @@ public class ActivityCreateMeeting extends AppCompatActivity {
             DatePicker datePicker = (DatePicker) findViewById(R.id.datePicker2);
             int dayOfMonth = datePicker.getDayOfMonth();
             int dateYear = datePicker.getYear();
-            int dateMonth = datePicker.getMonth()+1;
+            int dateMonth = datePicker.getMonth();
             String dateAsString = ""+dateMonth+"-"+dayOfMonth+"-"+dateYear;
             System.out.println("Trying: " + dateAsString);
             freeTimeCalculator = new FreeTimeCalculator(start,end,duration);
@@ -266,6 +265,11 @@ public class ActivityCreateMeeting extends AppCompatActivity {
                     freeTimeCalculator.addPersonTime(daysFreeTimes);
                 }
             }
+            if(freeTimeCalculator.listOfPeopleTimes.size() != memberIDList.size()) {
+                displayWarning("Not all members' free times found");
+                return;
+            }
+
             freeTimeCalculator.fillPossibleTimes();
             System.out.println("free calc: "+freeTimeCalculator.possibleTimes);
 
