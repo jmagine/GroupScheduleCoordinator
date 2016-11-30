@@ -8,9 +8,11 @@ import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.DatePicker;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -52,24 +54,6 @@ public class MainActivityTest {
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
 
-    @Before
-    public void setUp(){
-            //click on "plus button"
-            onView(withId(R.id.myFab))
-                    .perform(click());
-
-            onView(withId(R.id.userInputDialog))
-                    .perform(typeText("newGroup"));
-
-            //click create
-            ViewInteraction appCompatButton = onView(
-                    allOf(withId(android.R.id.button1), withText("Create"),
-                            withParent(allOf(withId(R.id.buttonPanel),
-                                    withParent(withId(R.id.parentPanel)))),
-                            isDisplayed()));
-            appCompatButton.perform(click());
-    }
-
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
 
@@ -90,22 +74,19 @@ public class MainActivityTest {
     }
 
     @Test
-    //Given that we create a group called group 1
-    public void testCreateGroup() {
-        //click on "plus button"
+    public void testCreateGroup() throws InterruptedException {
+        //When the floating action button is clicked
         onView(withId(R.id.myFab))
                 .perform(click());
 
+        Thread.sleep(1000);
+        //then the new group dialog pops up and when you type Group A into the dialog
         onView(withId(R.id.userInputDialog))
+                    .check(matches(isDisplayed()))
                     .perform(typeText("Group A"));
 
-        /*ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.userInputDialog),
-                        withParent(allOf(withId(R.id.custom_dialog_layout_design_user_input),
-                                withParent(withId(R.id.custom)))),
-                        isDisplayed()));
-        appCompatEditText.perform(replaceText("Group A"), closeSoftKeyboard());*/
-
+        Thread.sleep(1000);
+        //and when you click on create...
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("Create"),
                         withParent(allOf(withId(R.id.buttonPanel),
@@ -113,6 +94,7 @@ public class MainActivityTest {
                         isDisplayed()));
         appCompatButton.perform(click());
 
+        //then a new group "Group A" in the groupList list view is displayed
         onData(hasToString(startsWith("Group A")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
                 .check(matches(isDisplayed()));
@@ -120,186 +102,8 @@ public class MainActivityTest {
 
 
     @Test
-    public void
-    testaddRandomMeeting() {
-
-        //...When we click on the group
-        onData(hasToString(startsWith("newGroup")))
-                .inAdapterView(withId(R.id.groupList)).atPosition(0)
-                .perform(click());
-
-        //Then we see the group page
-        //When we click on new meeting...
-        onView(withId(R.id.btnNewMeeting))
-                .perform(click());
-        //and When we type in an event name
-        onView(withId(R.id.eventName))
-                .perform(typeText("HW 4 Meeting"));
-
-
-        //and When we choose a length for the meeting
-        onView(withId(R.id.spinnerLengthHour)).perform(click());
-        onData(allOf(is(instanceOf(Integer.class)), is(2))).perform(click());
-        //Then the length of the meeting is correctly reflected.
-        //onView(withId(R.id.spinnerLengthHour)).check(matches(withSpinnerText(containsString("2"))));
-
-        //When we choose the time when we begin to be free
-        onView(withId(R.id.spinnerBeginHour)).perform(click());
-        onData(allOf(is(instanceOf(Integer.class)), is(9))).perform(click());
-
-        //and when we choose the time we stop being free
-        onView(withId(R.id.spinnerEndHour)).perform(click());
-        onData(allOf(is(instanceOf(Integer.class)), is(5))).perform(click());
-        onView(withId(R.id.spinnerEndMinute)).perform(click());
-        onData(allOf(is(instanceOf(Integer.class)), is(30))).perform(click());
-        onView(withId(R.id.spinnerEndToD)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("PM"))).perform(click());
-
-
-        onView(withId(R.id.scrollpanel)).perform(swipeUp());
-        //and when we click create meeting
-        onView(withId(R.id.btnCreateMeeting)).perform(click());
-
-        //Then new meeting shows up on the list.
-        withText(containsString("HW 4 Meeting")).matches(onView(withId(R.id.lvMeetings)));
-    }
-
-    @Test
-    public void testMembersfromWidget(){
-        onData(hasToString(startsWith("newGroup")))
-                .inAdapterView(withId(R.id.groupList)).atPosition(0)
-                .perform(click());
-
-        //Then we see the group page
-        //When we click on new meeting...
-        onView(withId(R.id.btnNewMeeting))
-                .check(matches(isDisplayed()));
-
-        ViewInteraction appCompatTextView7 = onView(
-                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
-        appCompatTextView7.perform(click());
-
-        onView(withId(R.id.addmembers))
-                .check(matches(isDisplayed()));
-
-    }
-
-    @Test
-    public void testAddMember(){
-        onData(hasToString(startsWith("newGroup")))
-                .inAdapterView(withId(R.id.groupList)).atPosition(0)
-                .perform(click());
-
-        ViewInteraction appCompatTextView7 = onView(
-                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
-        appCompatTextView7.perform(click());
-
-        onView(withId(R.id.addmembers))
-                .perform(click());
-
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.tbMemberName), isDisplayed()));
-        appCompatEditText.perform(click());
-
-        appCompatEditText.perform(replaceText("Harry"), closeSoftKeyboard());
-
-        ViewInteraction appCompatEditText4 = onView(
-                allOf(withId(R.id.tbMemberEmail), isDisplayed()));
-        appCompatEditText4.perform(replaceText("getfreemoney@ymail.com"), closeSoftKeyboard());
-
-        ViewInteraction appCompatEditText5 = onView(
-                allOf(withId(R.id.tbMemberEmail), withText("getfreemoney@ymail.com"), isDisplayed()));
-        appCompatEditText5.perform(pressImeActionButton());
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.btnCreateGroup), withText("Add Member"), isDisplayed()));
-        appCompatButton2.perform(click());
-
-        ViewInteraction appCompatTextView5 = onView(
-                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
-        appCompatTextView5.perform(click());
-
-        /* ViewInteraction textView2 = onView(
-                allOf(withId(android.R.id.text1), withText("getfreemoney@ymail.com"),
-                        childAtPosition(
-                                allOf(withId(R.id.lvMembers),
-                                        childAtPosition(
-                                                withId(R.id.members),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        textView2.check(matches(withText("getfreemoney@ymail.com")));*/
-        DataInteraction v2 = onData(hasToString(startsWith("getfreemoney@ymail.com")))
-                .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
-        v2.check(matches(withText("getfreemoney@ymail.com")));
-
-    }
-
-    @Test
-    public void testAddMember2(){
-        onData(hasToString(startsWith("newGroup")))
-                .inAdapterView(withId(R.id.groupList)).atPosition(0)
-                .perform(click());
-
-        ViewInteraction appCompatTextView7 = onView(
-                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
-        appCompatTextView7.perform(click());
-
-        onView(withId(R.id.addmembers))
-                .perform(click());
-
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.tbMemberName), isDisplayed()));
-        appCompatEditText.perform(click());
-
-        appCompatEditText.perform(replaceText("Students"), closeSoftKeyboard());
-
-        ViewInteraction appCompatEditText4 = onView(
-                allOf(withId(R.id.tbMemberEmail), isDisplayed()));
-        appCompatEditText4.perform(typeText("getexpensivemisery@ucsd.edu"), closeSoftKeyboard());
-
-        /*ViewInteraction appCompatEditText5 = onView(
-                allOf(withId(R.id.tbMemberEmail), withText("getexpensivemisery@ucsd.edu"), isDisplayed()));
-        appCompatEditText5.perform(pressImeActionButton());*/
-
-        ViewInteraction appCompatButton2 = onView(
-                allOf(withId(R.id.btnCreateGroup), withText("Add Member"), isDisplayed()));
-        appCompatButton2.perform(click());
-
-        ViewInteraction appCompatTextView5 = onView(
-                allOf(withId(android.R.id.title), withText("Info"), isDisplayed()));
-        appCompatTextView5.perform(click());
-
-        ViewInteraction appCompatTextView9 = onView(
-                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
-        appCompatTextView9.perform(click());
-
-
-        /* ViewInteraction textView2 = onView(
-                allOf(withId(android.R.id.text1), withText("getexpensivemisery@ucsd.edu"),
-                        childAtPosition(
-                                allOf(withId(R.id.lvMembers),
-                                        childAtPosition(
-                                                withId(R.id.members),
-                                                0)),
-                                1),
-                        isDisplayed()));
-        textView2.check(matches(withText("getexpensivemisery@ucsd.edu")));*/
-        DataInteraction v2 = onData(hasToString(startsWith("getexpensivemisery@ucsd.edu")))
-                .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
-        v2.check(matches(withText("getexpensivemisery@ucsd.edu")));
-    }
-
-
-    @Test
-    public void testExistingGroup(){
-        DataInteraction v2 = onData(hasToString(startsWith("newGroup")))
-                .inAdapterView(withId(R.id.groupList)).atPosition(0);
-        v2.check(matches(withText("newGroup")));
-    }
-
-    @Test
-    public void testDatePicker() {
+    public void testAddMember() throws InterruptedException {
+        Thread.sleep(1000);
         ViewInteraction floatingActionButton = onView(
                 allOf(withId(R.id.myFab),
                         withParent(allOf(withId(R.id.activity_main),
@@ -307,10 +111,12 @@ public class MainActivityTest {
                         isDisplayed()));
         floatingActionButton.perform(click());
 
-        //find text box and type group1
+        Thread.sleep(1000);
+        //and when we create a new group
         onView(withId(R.id.userInputDialog))
-                .perform(typeText("A Group"));
+                .perform(typeText("Group C"));
 
+        Thread.sleep(1000);
         ViewInteraction appCompatButton = onView(
                 allOf(withId(android.R.id.button1), withText("Create"),
                         withParent(allOf(withId(R.id.buttonPanel),
@@ -318,10 +124,86 @@ public class MainActivityTest {
                         isDisplayed()));
         appCompatButton.perform(click());
 
-        onData(hasToString(startsWith("A Group")))
+        //when we enter the new group
+        onData(hasToString(startsWith("Group C")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
                 .perform(click());
 
+        //When we click on members...
+        ViewInteraction appCompatTextView7 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView7.perform(click());
+
+        //then members content page appears. When we click on it...
+        onView(withId(R.id.addmembers))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        //Then Dialog appears to enter member
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.tbMemberName), isDisplayed()));
+        appCompatEditText.perform(click());
+
+        //When we enter "Students" for the name of the new member
+        appCompatEditText.perform(replaceText("Students"), closeSoftKeyboard());
+
+        //and when we enter an email
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.tbMemberEmail), isDisplayed()));
+        appCompatEditText4.perform(typeText("getexpensivemisery@ucsd.edu"), closeSoftKeyboard());
+
+        //and when we click addmember
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnCreateGroup), withText("Add Member"), isDisplayed()));
+        appCompatButton2.perform(click());
+
+        //and when we cut away from member content page
+        ViewInteraction appCompatTextView5 = onView(
+                allOf(withId(android.R.id.title), withText("Info"), isDisplayed()));
+        appCompatTextView5.perform(click());
+
+        //when we come back to the member content page
+        ViewInteraction appCompatTextView9 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView9.perform(click());
+
+        //the new member's email is still there!
+        DataInteraction v2 = onData(hasToString(startsWith("getexpensivemisery@ucsd.edu")))
+                .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
+        v2.check(matches(withText("getexpensivemisery@ucsd.edu")));
+    }
+
+
+    @Test
+    public void testaddMeetingDP() throws InterruptedException {
+        Thread.sleep(1000);
+        //Given the floating action button, when we click on it
+        ViewInteraction floatingActionButton = onView(
+                allOf(withId(R.id.myFab),
+                        withParent(allOf(withId(R.id.activity_main),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        floatingActionButton.perform(click());
+
+        Thread.sleep(1000);
+        //and when we create a new group
+        onView(withId(R.id.userInputDialog))
+                .perform(typeText("Group B"));
+
+        Thread.sleep(1000);
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(android.R.id.button1), withText("Create"),
+                        withParent(allOf(withId(R.id.buttonPanel),
+                                withParent(withId(R.id.parentPanel)))),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+
+        //when we enter the new group
+        onData(hasToString(startsWith("Group B")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0)
+                .perform(click());
+
+        //then we can add a meeting
         ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.btnNewMeeting), withText("Add New Meeting"),
                         withParent(allOf(withId(R.id.info),
@@ -359,6 +241,7 @@ public class MainActivityTest {
                 allOf(withId(android.R.id.text1), withText("PM"), isDisplayed()));
         appCompatTextView4.perform(click());
 
+        //then there is a date picker we can use
         ViewInteraction appCompatImageButton = onView(
                 allOf(withClassName(is("android.support.v7.widget.AppCompatImageButton")), withContentDescription("Next month"),
                         withParent(allOf(withClassName(is("android.widget.DayPickerView")),
@@ -366,24 +249,51 @@ public class MainActivityTest {
                         isDisplayed()));
         appCompatImageButton.perform(click());
 
+        //when we click create meeting
         ViewInteraction appCompatButton3 = onView(
                 allOf(withId(R.id.btnCreateMeeting), withText("Create Meeting"),
                         withParent(allOf(withId(R.id.activity_create_meeting),
                                 withParent(withId(R.id.scrollpanel))))));
         appCompatButton3.perform(scrollTo(), click());
 
+        //then the meeting is in the list view
         ViewInteraction v = onData(hasToString(startsWith("Meet at")))
                 .inAdapterView(withId(R.id.lvMeetings)).atPosition(0)
                 .perform(click());
-        v.check(matches(withText("Meet at 01:00 - 03:00")));
+        v.check(matches(isDisplayed()));
     }
 
     @Test
-    public void testBackButton(){
-        onData(hasToString(startsWith("newGroup")))
+    public void testBackButton() throws InterruptedException {
+
+        //Given the floating action button, when we click on it
+        Thread.sleep(1000);
+        ViewInteraction floatingActionButton = onView(
+                allOf(withId(R.id.myFab),
+                        withParent(allOf(withId(R.id.activity_main),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        floatingActionButton.perform(click());
+
+        Thread.sleep(1000);
+        //and when we create a new group
+        onView(withId(R.id.userInputDialog))
+                .perform(typeText("Group F"));
+
+        Thread.sleep(1000);
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(android.R.id.button1), withText("Create"),
+                        withParent(allOf(withId(R.id.buttonPanel),
+                                withParent(withId(R.id.parentPanel)))),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+
+        //when we enter the new group
+        onData(hasToString(startsWith("Group F")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
                 .perform(click());
 
+        //and when we click on members and add a member
         ViewInteraction appCompatTextView7 = onView(
                 allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
         appCompatTextView7.perform(click());
@@ -392,13 +302,62 @@ public class MainActivityTest {
                 .check(matches(isDisplayed()))
                 .perform(click());
 
+        //when we press back
         pressBack();
 
+        //then we are brought back to the member page
         onView(withId(R.id.addmembers)).check(matches(isDisplayed()));
 
+        //and when we press back again
         pressBack();
 
+        //then we are brought back to the groups page
         onView(withId(R.id.myFab)).check(matches(isDisplayed()));
     }
+
+
+    @Test
+    public void testMembersfromWidget() throws InterruptedException {
+        Thread.sleep(1000);
+        //Given the floating action button, when we click on it
+        ViewInteraction floatingActionButton = onView(
+                allOf(withId(R.id.myFab),
+                        withParent(allOf(withId(R.id.activity_main),
+                                withParent(withId(android.R.id.content)))),
+                        isDisplayed()));
+        floatingActionButton.perform(click());
+
+        Thread.sleep(1000);
+        //and when we create a new group
+        onView(withId(R.id.userInputDialog))
+                .perform(typeText("Group H"));
+
+        Thread.sleep(1000);
+        ViewInteraction appCompatButton = onView(
+                allOf(withId(android.R.id.button1), withText("Create"),
+                        withParent(allOf(withId(R.id.buttonPanel),
+                                withParent(withId(R.id.parentPanel)))),
+                        isDisplayed()));
+        appCompatButton.perform(click());
+
+        //when we enter the new group
+        onData(hasToString(startsWith("Group H")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0)
+                .perform(click());
+
+        //Then we see the group page.
+        onView(withId(R.id.btnNewMeeting))
+                .check(matches(isDisplayed()));
+
+        //When we click on the Members widget tab
+        ViewInteraction appCompatTextView7 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView7.perform(click());
+
+        //Then the addmembers button is displayed
+        onView(withId(R.id.addmembers))
+                .check(matches(isDisplayed()));
+    }
+
 
 }

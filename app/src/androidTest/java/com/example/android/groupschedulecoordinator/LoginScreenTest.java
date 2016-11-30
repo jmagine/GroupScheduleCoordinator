@@ -32,9 +32,8 @@ public class LoginScreenTest {
 
     @Test
     public void validateSignIn() {
-        onView(withText("Sign in with Google"))
-                .perform(click());
-        //can't use espresso to test auth, must use uiautomator
+        onView(withId(R.id.sign_in_button))
+                .check(matches(isDisplayed()));
     }
 
 
