@@ -15,6 +15,7 @@ public class Event {
     private int start;
     private int duration;
     private int end;
+    private String date;
     private boolean isReady;
     private ArrayList<String> pendingUsers;
     private ArrayList<String> completedUsers;
@@ -29,6 +30,7 @@ public class Event {
         this.start = 0;
         this.duration = 0;
         this.end = 0;
+        this.date = "";
         isReady = false;
     }
 
@@ -45,6 +47,8 @@ public class Event {
     public int getEnd(){
         return end;
     }
+
+    public String getDate() { return date;}
 
     public boolean getReady(){
         return isReady;
@@ -84,6 +88,8 @@ public class Event {
         }
     }
 
+    public void setDate(String d){date = d;}
+
     public void setReady(boolean id){
         isReady = id;
     }
@@ -113,6 +119,7 @@ public class Event {
         result.put("name", eventName);
         result.put("start", start);
         result.put("end", end);
+        result.put("date",date);
         result.put("isReady", isReady);
         result.put("pendingUsers", pendingUsers);
         result.put("completedUsers", completedUsers);

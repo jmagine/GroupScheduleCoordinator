@@ -482,6 +482,7 @@ public class GroupActivity extends AppCompatActivity {
         for(String s: sortedKeys){
             int time = currEvents.get(s).getStart();
             int dur = currEvents.get(s).getDuration();
+            String date = currEvents.get(s).getDate();
 
             String start = "";
             String end = "";
@@ -504,7 +505,7 @@ public class GroupActivity extends AppCompatActivity {
             else
                 end += "30";
 
-            event_list.add(s + " at " + start + " - " + end);
+            event_list.add(s + " at " + start + " - " + end + ": "+date);
         }
 
         System.out.println("CurrEvents: " + currEvents);
