@@ -108,6 +108,7 @@ public class GroupActivity extends AppCompatActivity {
         lvEvent = (ListView) findViewById(R.id.lvMeetings);
         event_list = new ArrayList<String>();
 
+        //fetch bundle iteams from previous instances(MainActvity/CreateEvent/AddMember)
         final Bundle bundle1 = getIntent().getExtras();
         if(bundle1 != null)
         {
@@ -130,6 +131,8 @@ public class GroupActivity extends AppCompatActivity {
             calling = bundle1.getString("calling");
             memberName = bundle1.getString("member_name");
             memberEmail = bundle1.getString("member_email");
+
+            //update user email to match format used on Firebase
             if(memberName != null)
                 memberName = memberEmail.replace('.',(char)0xA4);
         }
@@ -188,9 +191,6 @@ public class GroupActivity extends AppCompatActivity {
         //spec.setContent(R.id.calendar);
         //spec.setIndicator("Calendar");
         //host.addTab(spec);
-
-
-
 
         // Get a reference for the week view in the layout.
         //mWeekView = (WeekView) findViewById(R.id.weekView);
@@ -339,6 +339,14 @@ public class GroupActivity extends AppCompatActivity {
 
     }
 
+    /*
+        Method to update the memberlist whenever a member is added
+        Called inside the DataListener
+        Updates existing member list based on the one on Firebase
+        and pushes the changes dynamically
+        Valid emails that are added will also update and reflect on their
+        MainActivity
+     */
     private void updateMemberList(){
         lvMem = (ListView) findViewById(R.id.lvMembers);
 
@@ -540,6 +548,7 @@ public class GroupActivity extends AppCompatActivity {
         }
         currGroup.put(name,email);
     }
+
     private void addEvent(String eventName, int start, int duration){
         System.out.println("Entered addEvent: " + eventName + " " + start + " " + duration);
         System.out.println("EventList: " + event_list);
