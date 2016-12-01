@@ -61,11 +61,9 @@ public class LoginScreen extends AppCompatActivity{
     private final int REQUEST_CODE_PERMISSIONS = 123;
     private final int REQUEST_CODE_MULTI = 124;
 
-
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mFirebaseUser;
-
 
     private int permissionCode;
     private GoogleApiClient mGoogleApiClient;
@@ -77,7 +75,7 @@ public class LoginScreen extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        //Create the relevant instances for authenticating with google
         mGoogleButton = (SignInButton) findViewById(R.id.sign_in_button);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -122,6 +120,9 @@ public class LoginScreen extends AppCompatActivity{
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+    /*
+        Handles the authentication if sign in arguments are valid
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -156,6 +157,10 @@ public class LoginScreen extends AppCompatActivity{
         }
     }
 
+    /*
+        Authenticate sign in credentials with Firebase and update data on Firebase
+        Sends user to MainActivity on success
+     */
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
@@ -195,6 +200,9 @@ public class LoginScreen extends AppCompatActivity{
         }
     }
 
+    /*
+        Prevent users's from accidently returning to the MainActivity upon logout
+     */
     @Override
     public void onBackPressed() {
     }
@@ -278,6 +286,9 @@ public class LoginScreen extends AppCompatActivity{
                 .show();
     }
 
+    /*
+        Helper to check for valid permissions and checking if there were granted.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){

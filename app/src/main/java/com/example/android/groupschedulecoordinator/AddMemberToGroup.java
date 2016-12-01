@@ -52,6 +52,8 @@ public class AddMemberToGroup extends AppCompatActivity {
             }
             group_list.add(memberEmail);
 
+            //Pass the relevant information back into GroupActivity so
+            //Changes are reflected.
             intent.putStringArrayListExtra("groupList", group_list);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra("member_name", memberName);
