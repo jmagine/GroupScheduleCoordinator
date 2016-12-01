@@ -468,7 +468,7 @@ public class MainActivityTest {
         onView(withId(R.id.btnCreateMeeting)).perform(click());
 
         //Then new meeting shows up on the list.
-
+        Thread.sleep(1000);
         ViewInteraction v = onData(hasToString(startsWith("HW 4")))
                 .inAdapterView(withId(R.id.lvMeetings)).atPosition(0)
                 .perform(click());

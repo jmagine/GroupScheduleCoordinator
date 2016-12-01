@@ -1,0 +1,11 @@
+Instructions for UI Tests:
+
+Must be logged in through Google sign-in to run:
+    ExistingGroupTest
+    LogoutTest
+    MainActivityTest
+    MultiGroupMeetingTest
+    AddMemberTest
+
+Must be at login screen to run
+    LoginScreenTest

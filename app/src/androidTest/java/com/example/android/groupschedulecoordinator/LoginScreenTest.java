@@ -16,14 +16,8 @@ import org.junit.runner.RunWith;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-//import android.support.test.rule.;
-//import android.support.test.runner.AndroidJUnit4;
 
-/**
- * Created by Emily on 11/26/2016.
- */
-
-
+@RunWith(AndroidJUnit4.class)
 public class LoginScreenTest {
 
     @Rule
@@ -32,8 +26,10 @@ public class LoginScreenTest {
 
     @Test
     public void validateSignIn() {
+        //Given the sign in page, then the sign in button appears and then we can click on it
         onView(withId(R.id.sign_in_button))
-                .check(matches(isDisplayed()));
+                .check(matches(isDisplayed()))
+                .perform(click());
     }
 
 

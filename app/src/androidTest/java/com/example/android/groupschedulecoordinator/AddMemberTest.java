@@ -1,3 +1,5 @@
+
+
 package com.example.android.groupschedulecoordinator;
 
 
@@ -44,11 +46,6 @@ package com.example.android.groupschedulecoordinator;
         import static org.hamcrest.Matchers.is;
         import static org.hamcrest.core.StringStartsWith.startsWith;
 
-
-/**
- * Created by Emily on 11/30/2016.
- */
-
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class AddMemberTest {
@@ -79,12 +76,13 @@ public class AddMemberTest {
     @Before
     public void setUp() throws InterruptedException {
         //Given that you're in MainActivity (already signed in) and that you have a precreated
-        //group called "newGroup"
-        //click on "plus button"
+        //group called "Group E"
+        //click to create group
         Thread.sleep(4000);
         onView(withId(R.id.myFab))
                 .perform(click());
 
+        //name the group
         Thread.sleep(5000);
         onView(withId(R.id.userInputDialog))
                 .perform(typeText("Group E"));
