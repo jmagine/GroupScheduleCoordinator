@@ -50,6 +50,37 @@ import static org.hamcrest.core.StringStartsWith.startsWith;
 @LargeTest
 public class MainActivityTest {
 
+    private static boolean set_Up = false;
+    private static boolean m1 = false;
+    private static boolean m2 = false;
+
+    @Before
+    public void setUp() throws InterruptedException {
+
+        if (!set_Up) {
+            //Given that you're in MainActivity (already signed in) and that you have a precreated
+            //group called "newGroup"
+            //click on "plus button"
+            Thread.sleep(1000);
+            onView(withId(R.id.myFab))
+                    .perform(click());
+
+            Thread.sleep(1000);
+            onView(withId(R.id.userInputDialog))
+                    .perform(typeText("newGroup"));
+
+            Thread.sleep(1000);
+            //click create
+            ViewInteraction appCompatButton = onView(
+                    allOf(withId(android.R.id.button1), withText("Create"),
+                            withParent(allOf(withId(R.id.buttonPanel),
+                                    withParent(withId(R.id.parentPanel)))),
+                            isDisplayed()));
+            appCompatButton.perform(click());
+        }
+        set_Up = true;
+    }
+
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule =
             new ActivityTestRule<>(MainActivity.class);
@@ -76,6 +107,7 @@ public class MainActivityTest {
     @Test
     public void testCreateGroup() throws InterruptedException {
         //When the floating action button is clicked
+        Thread.sleep(1000);
         onView(withId(R.id.myFab))
                 .perform(click());
 
@@ -358,6 +390,211 @@ public class MainActivityTest {
         onView(withId(R.id.addmembers))
                 .check(matches(isDisplayed()));
     }
+
+    ///////////////////////////////
+    @Test
+    public void testExistingGroup() throws InterruptedException {
+        //Given a preexisting group newGroup, when we search for new group in the list view,
+        //then the new group is still there (and clickable)
+        Thread.sleep(1000);
+        DataInteraction v2 = onData(hasToString(startsWith("newGroup")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0);
+        v2.check(matches(withText("newGroup")));
+    }
+
+    @Test
+    public void testaddRandomMeetingtoExisting() throws InterruptedException {
+
+        Thread.sleep(1000);
+        //...When we click on the group
+        onData(hasToString(startsWith("newGroup")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0)
+                .perform(click());
+
+        //Then we see the group content page (button new meeting exists)
+        //When we click on new meeting...
+        onView(withId(R.id.btnNewMeeting))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        //and When we type in an event name
+        onView(withId(R.id.eventName))
+                .perform(typeText("HW 4 Meeting"));
+
+        ViewInteraction appCompatSpinner = onView(
+                withId(R.id.spinnerLengthHour));
+        appCompatSpinner.perform(scrollTo(), click());
+
+        ViewInteraction appCompatTextView2 = onView(
+                allOf(withId(android.R.id.text1), withText("1"), isDisplayed()));
+        appCompatTextView2.perform(click());
+
+        ViewInteraction as = onView(
+                withId(R.id.spinnerBeginHour));
+        as.perform(scrollTo(), click());
+
+        ViewInteraction appCompatTextView3 = onView(
+                allOf(withId(android.R.id.text1), withText("11"), isDisplayed()));
+        appCompatTextView3.perform(click());
+
+        ViewInteraction appCompatSpinner2 = onView(
+                withId(R.id.spinnerEndHour));
+        appCompatSpinner2.perform(scrollTo(), click());
+
+        ViewInteraction a3 = onView(
+                allOf(withId(android.R.id.text1), withText("5"), isDisplayed()));
+        a3.perform(click());
+
+        ViewInteraction a2 = onView(
+                withId(R.id.spinnerEndMinute));
+        a2.perform(scrollTo(), click());
+
+        ViewInteraction a4 = onView(
+                allOf(withId(android.R.id.text1), withText("30"), isDisplayed()));
+        a4.perform(click());
+
+        ViewInteraction appCompatSpinner3 = onView(
+                withId(R.id.spinnerEndToD));
+        appCompatSpinner3.perform(scrollTo(), click());
+
+        ViewInteraction appCompatTextView4 = onView(
+                allOf(withId(android.R.id.text1), withText("PM"), isDisplayed()));
+        appCompatTextView4.perform(click());
+
+        onView(withId(R.id.scrollpanel)).perform(swipeUp());
+
+        Thread.sleep(1000);
+        //and when we click create meeting
+        onView(withId(R.id.btnCreateMeeting)).perform(click());
+
+        //Then new meeting shows up on the list.
+
+        ViewInteraction v = onData(hasToString(startsWith("HW 4")))
+                .inAdapterView(withId(R.id.lvMeetings)).atPosition(0)
+                .perform(click());
+        v.check(matches(isDisplayed()));
+    }
+
+    //tests adding member to existing group
+    @Test
+    public void testAddMembertoExisting() throws InterruptedException {
+        //when we enter the new group
+        Thread.sleep(1000);
+        onData(hasToString(startsWith("newGroup")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0)
+                .perform(click());
+
+        //When we click on members...
+        ViewInteraction appCompatTextView7 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView7.perform(click());
+
+        //then members content page appears. When we click on it...
+        onView(withId(R.id.addmembers))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        //Then Dialog appears to enter member
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.tbMemberName), isDisplayed()));
+        appCompatEditText.perform(click());
+
+        //When we enter "Students" for the name of the new member
+        appCompatEditText.perform(replaceText("Dogs"), closeSoftKeyboard());
+
+        //and when we enter an email
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.tbMemberEmail), isDisplayed()));
+        appCompatEditText4.perform(typeText("getfreeleaves@yahoo.com"), closeSoftKeyboard());
+
+        //and when we click addmember
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnCreateGroup), withText("Add Member"), isDisplayed()));
+        appCompatButton2.perform(click());
+
+        //and when we cut away from member content page
+        ViewInteraction appCompatTextView5 = onView(
+                allOf(withId(android.R.id.title), withText("Info"), isDisplayed()));
+        appCompatTextView5.perform(click());
+
+        //when we come back to the member content page
+        ViewInteraction appCompatTextView9 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView9.perform(click());
+
+        //the new member's email is still there!
+        DataInteraction v2 = onData(hasToString(startsWith("getfreeleaves@yahoo.com")))
+                .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
+        v2.check(matches(withText("getfreeleaves@yahoo.com")));
+
+        if (m2)
+        {
+            DataInteraction v3 = onData(hasToString(startsWith("sleep@yahoo.com")))
+                    .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
+            v3.check(matches(withText("sleep@yahoo.com")));
+        }
+
+        m1 = true;
+    }
+
+    @Test
+    public void addMember2Existing() throws InterruptedException {
+        Thread.sleep(1000);
+        onData(hasToString(startsWith("newGroup")))
+                .inAdapterView(withId(R.id.groupList)).atPosition(0)
+                .perform(click());
+
+        //When we click on members...
+        ViewInteraction appCompatTextView7 = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        appCompatTextView7.perform(click());
+
+        //then members content page appears. When we click on it...
+        onView(withId(R.id.addmembers))
+                .check(matches(isDisplayed()))
+                .perform(click());
+
+        //Then Dialog appears to enter member
+        ViewInteraction appCompatEditText = onView(
+                allOf(withId(R.id.tbMemberName), isDisplayed()));
+        appCompatEditText.perform(click());
+
+        //When we enter "Students" for the name of the new member
+        appCompatEditText.perform(replaceText("Cats"), closeSoftKeyboard());
+
+        //and when we enter an email
+        ViewInteraction appCompatEditText4 = onView(
+                allOf(withId(R.id.tbMemberEmail), isDisplayed()));
+        appCompatEditText4.perform(typeText("sleep@yahoo.com"), closeSoftKeyboard());
+
+        //and when we click addmember
+        ViewInteraction appCompatButton2 = onView(
+                allOf(withId(R.id.btnCreateGroup), withText("Add Member"), isDisplayed()));
+        appCompatButton2.perform(click());
+
+        //and when we click on the members tab
+        ViewInteraction ac = onView(
+                allOf(withId(android.R.id.title), withText("Members"), isDisplayed()));
+        ac.perform(click());
+
+        Thread.sleep(1000);
+        //the new member's email is still there!
+        DataInteraction v2 = onData(hasToString(startsWith("sleep@yahoo.com")))
+                .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
+        v2.check(matches(withText("sleep@yahoo.com")));
+
+        if (m1)
+        {
+            //tests that given a previously existing member, when we add a new member and return
+            //to the member list view, the previously created member is still there.
+            Thread.sleep(1000);
+            DataInteraction v3 = onData(hasToString(startsWith("getfreeleaves@yahoo.com")))
+                    .inAdapterView(withId(R.id.lvMembers)).atPosition(0);
+            v3.check(matches(withText("getfreeleaves@yahoo.com")));
+        }
+        m2 = true;
+    }
+
 
 
 }
