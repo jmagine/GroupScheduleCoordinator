@@ -77,6 +77,23 @@ public class MainActivityTest {
                                     withParent(withId(R.id.parentPanel)))),
                             isDisplayed()));
             appCompatButton.perform(click());
+
+            Thread.sleep(1000);
+            onView(withId(R.id.myFab))
+                    .perform(click());
+
+            Thread.sleep(1000);
+            onView(withId(R.id.userInputDialog))
+                    .perform(typeText("newerGroup"));
+
+            Thread.sleep(1000);
+            //click create
+            ViewInteraction ab = onView(
+                    allOf(withId(android.R.id.button1), withText("Create"),
+                            withParent(allOf(withId(R.id.buttonPanel),
+                                    withParent(withId(R.id.parentPanel)))),
+                            isDisplayed()));
+            ab.perform(click());
         }
         set_Up = true;
     }
@@ -407,7 +424,7 @@ public class MainActivityTest {
 
         Thread.sleep(1000);
         //...When we click on the group
-        onData(hasToString(startsWith("newGroup")))
+        onData(hasToString(startsWith("newerGroup")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
                 .perform(click());
 

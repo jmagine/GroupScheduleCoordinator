@@ -1,7 +1,6 @@
 Instructions for UI Tests:
 
 Must be logged in through Google sign-in to run:
-    ExistingGroupTest
     LogoutTest
     MainActivityTest
     MultiGroupMeetingTest

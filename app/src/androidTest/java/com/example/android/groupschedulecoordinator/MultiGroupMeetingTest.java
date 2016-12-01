@@ -126,6 +126,7 @@ public class MultiGroupMeetingTest {
 
     @Test
     public void verifyGroups() throws InterruptedException {
+        //verify that all the groups were created are in the group list
         Thread.sleep(1000);
         onData(hasToString(startsWith("A Group")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
@@ -144,6 +145,7 @@ public class MultiGroupMeetingTest {
 
     @Test
     public void failedAddMeeting() throws InterruptedException {
+        //when clicking on C Group
         Thread.sleep(1000);
         onData(hasToString(startsWith("C Group")))
                 .inAdapterView(withId(R.id.groupList)).atPosition(0)
@@ -190,6 +192,7 @@ public class MultiGroupMeetingTest {
 
         onView(withId(R.id.spinnerBeginHour)).perform(scrollTo(), click());
 
+        //when we actually put in valid info
         onView(allOf(withId(android.R.id.text1), withText("6"), isDisplayed())).perform(click());
 
         onView(withId(R.id.spinnerEndHour)).perform(scrollTo(), click());
